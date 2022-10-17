@@ -23,7 +23,7 @@
         android:paddingStart="@dimen/padding_left"
         android:paddingTop="@dimen/padding_title_content"
         android:paddingEnd="@dimen/padding_right"
-        android:paddingBottom="28dp">
+        android:paddingBottom="24dp">
 
         <Button
             android:id="@+id/button_search"
