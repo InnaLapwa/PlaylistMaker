@@ -4,8 +4,10 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/Inna/AndroidStudioProjects/PlaylistMakerMain/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2665" />
+        <entry key="..\:/Users/Inna/AndroidStudioProjects/PlaylistMakerMain/app/src/main/res/drawable/bg_search_rectangle.xml" value="0.2665" />
         <entry key="..\:/Users/Inna/AndroidStudioProjects/PlaylistMakerMain/app/src/main/res/drawable/ic_arrow_back.xml" value="0.1935" />
         <entry key="..\:/Users/Inna/AndroidStudioProjects/PlaylistMakerMain/app/src/main/res/drawable/ic_arrow_forward.xml" value="0.2665" />
+        <entry key="..\:/Users/Inna/AndroidStudioProjects/PlaylistMakerMain/app/src/main/res/drawable/ic_clear.xml" value="0.2665" />
         <entry key="..\:/Users/Inna/AndroidStudioProjects/PlaylistMakerMain/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2665" />
         <entry key="..\:/Users/Inna/AndroidStudioProjects/PlaylistMakerMain/app/src/main/res/drawable/ic_library.xml" value="0.123" />
         <entry key="..\:/Users/Inna/AndroidStudioProjects/PlaylistMakerMain/app/src/main/res/drawable/ic_search.xml" value="0.1935" />
@@ -14,7 +16,9 @@
         <entry key="..\:/Users/Inna/AndroidStudioProjects/PlaylistMakerMain/app/src/main/res/drawable/ic_support.xml" value="0.2665" />
         <entry key="..\:/Users/Inna/AndroidStudioProjects/PlaylistMakerMain/app/src/main/res/layout/activity_library.xml" value="0.18541666666666667" />
         <entry key="..\:/Users/Inna/AndroidStudioProjects/PlaylistMakerMain/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/Users/Inna/AndroidStudioProjects/PlaylistMakerMain/app/src/main/res/layout/activity_search.xml" value="0.67" />
         <entry key="..\:/Users/Inna/AndroidStudioProjects/PlaylistMakerMain/app/src/main/res/layout/activity_settings.xml" value="0.33" />
+        <entry key="..\:/Users/Inna/AppData/Local/Android/Sdk/platforms/android-32/data/res/drawable/ic_clear.xml" value="0.2665" />
       </map>
     </option>
   </component>
