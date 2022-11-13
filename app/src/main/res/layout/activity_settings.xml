@@ -6,7 +6,8 @@
     android:background="?attr/background_color"
     android:orientation="vertical">
 
-    <LinearLayout style="@style/HeaderLayoutStyle">
+    <LinearLayout style="@style/HeaderLayoutStyle"
+        android:orientation="horizontal">
 
         <FrameLayout
             android:id="@+id/fl_settings_back"
@@ -26,7 +27,8 @@
         android:paddingTop="@dimen/padding_title_content"
         android:orientation="vertical">
 
-        <FrameLayout style="@style/SettingsListItemStyle">
+        <FrameLayout style="@style/SettingsListItemStyle"
+            android:orientation="horizontal">
 
             <TextView
                 android:text="@string/settings_dark_mode"

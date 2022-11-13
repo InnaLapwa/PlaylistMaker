@@ -65,11 +65,5 @@ class SearchActivity : AppCompatActivity() {
         inputText = savedInstanceState.getString(SEARCH_TEXT, "")
     }
 
-    private fun clearButtonVisibility(s: CharSequence?): Int {
-        return if (s.isNullOrEmpty()) {
-            View.GONE
-        } else {
-            View.VISIBLE
-        }
-    }
+    private fun clearButtonVisibility(s: CharSequence?) = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
 }

@@ -1,11 +1,8 @@
 package com.example.playlistmaker
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 
@@ -22,29 +19,27 @@ class SettingsActivity: AppCompatActivity() {
 
         val shareLayout = findViewById<FrameLayout>(R.id.shareLayout)
         shareLayout.setOnClickListener {
-            val shareIntent = Intent(Intent.ACTION_SEND)
-            shareIntent.type = "text/plain"
-            shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_app_link))
-            startActivity(Intent.createChooser(shareIntent, "Share with:"))
+            Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, getString(R.string.share_app_link))
+                startActivity(Intent.createChooser(this, "Share with:"))
+            }
         }
 
         val supportLayout = findViewById<FrameLayout>(R.id.supportLayout)
         supportLayout.setOnClickListener {
-            val subject = getString(R.string.share_app_subject)
-            val message = getString(R.string.share_app_message)
-            val supportIntent = Intent(Intent.ACTION_SENDTO)
-            supportIntent.data = Uri.parse("mailto:")
-            supportIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.share_app_email)))
-            supportIntent.putExtra(Intent.EXTRA_SUBJECT, subject)
-            supportIntent.putExtra(Intent.EXTRA_TEXT, message)
-            startActivity(supportIntent)
+            Intent(Intent.ACTION_SENDTO).apply {
+                data = Uri.parse("mailto:")
+                putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.share_app_email)))
+                putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_app_subject))
+                putExtra(Intent.EXTRA_TEXT, getString(R.string.share_app_message))
+                startActivity(this)
+            }
         }
 
         val userAgreementLayout = findViewById<FrameLayout>(R.id.userAgreementLayout)
         userAgreementLayout.setOnClickListener {
-            val userAgreementAddress = Uri.parse(getString(R.string.user_agreement_link))
-            val userAgreementIntent = Intent(Intent.ACTION_VIEW, userAgreementAddress)
-            startActivity(userAgreementIntent)
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.user_agreement_link))))
         }
     }
 }

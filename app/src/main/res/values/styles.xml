@@ -37,7 +37,6 @@
     <style name="SettingsListItemStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/settings_list_layout_height</item>
-        <item name="android:orientation">horizontal</item>
     </style>
 
     <style name="SearchEditTextIconStyle">
@@ -49,7 +48,6 @@
     <style name="HeaderLayoutStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/header_height</item>
-        <item name="android:orientation">horizontal</item>
     </style>
 
     <style name="HeaderIconLayoutStyle">

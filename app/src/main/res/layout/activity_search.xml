@@ -6,7 +6,8 @@
     android:background="?attr/background_color"
     android:orientation="vertical">
 
-    <LinearLayout style="@style/HeaderLayoutStyle">
+    <LinearLayout style="@style/HeaderLayoutStyle"
+        android:orientation="horizontal">
 
         <FrameLayout
             android:id="@+id/fl_search_back"
