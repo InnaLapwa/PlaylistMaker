@@ -19,5 +19,7 @@
         <item name="icon_header_color">@color/ultra_white</item>
         <item name="background_search_color">@color/ultra_white</item>
         <item name="search_color">@color/deep_gray</item>
+        <item name="track_artist_text_color">@color/white</item>
+        <item name="track_icon_color">@color/white</item>
     </style>
 </resources>

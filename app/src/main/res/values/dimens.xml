@@ -12,14 +12,20 @@
     <dimen name="search_margin_sides">16dp</dimen>
     <dimen name="search_icon_size">16dp</dimen>
 
+    <dimen name="search_track_layout_height">60dp</dimen>
+    <dimen name="search_track_cover_size">48dp</dimen>
+    <dimen name="search_track_dot_icon_size">4dp</dimen>
+
     <dimen name="main_icon_size">24dp</dimen>
     <dimen name="main_icon_text_padding">12dp</dimen>
     <dimen name="main_buttons_corner_radius">16dp</dimen>
 
     <dimen name="icon_layout_size">24dp</dimen>
 
-
+    
     <dimen name="title_text_size">24sp</dimen>
     <dimen name="main_button_text_size">24sp</dimen>
     <dimen name="settings_list_text_size">16sp</dimen>
+    <dimen name="search_track_text_size">16sp</dimen>
+    <dimen name="search_track_info_text_size">12sp</dimen>
 </resources>
