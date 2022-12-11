@@ -7,4 +7,6 @@
     <attr name="icon_header_color" format="reference"/>
     <attr name="background_search_color" format="reference"/>
     <attr name="search_color" format="reference"/>
+    <attr name="track_artist_text_color" format="reference"/>
+    <attr name="track_icon_color" format="reference"/>
 </resources>
