@@ -11,6 +11,7 @@
 
     <dimen name="search_margin_sides">16dp</dimen>
     <dimen name="search_icon_size">16dp</dimen>
+    <dimen name="search_info_icon_size">120dp</dimen>
 
     <dimen name="search_track_layout_height">60dp</dimen>
     <dimen name="search_track_cover_size">48dp</dimen>
@@ -28,4 +29,5 @@
     <dimen name="settings_list_text_size">16sp</dimen>
     <dimen name="search_track_text_size">16sp</dimen>
     <dimen name="search_track_info_text_size">12sp</dimen>
+    <dimen name="search_info_text_size">20sp</dimen>
 </resources>

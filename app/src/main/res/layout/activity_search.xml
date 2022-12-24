@@ -48,7 +48,9 @@
             android:textColorHint="?attr/search_color"
             android:hint="@string/search_hint"
             android:inputType="text"
-            android:maxLines="1"/>
+            android:maxLines="1"
+            android:imeOptions="actionDone"
+            android:singleLine="true"/>
 
         <ImageView
             android:id="@+id/iv_search_clear"
@@ -57,10 +59,57 @@
             android:visibility="gone"/>
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/search_recyclerView"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="24dp"/>
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/search_recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="24dp"/>
+
+        <LinearLayout
+            android:id="@+id/search_no_internet_layout"
+            style="@style/SearchInfoLayoutStyle"
+            android:visibility="gone"
+            android:orientation="vertical">
+
+            <ImageView
+                style="@style/SearchInfoIconStyle"
+                android:background="@drawable/ic_no_internet"/>
+
+            <TextView
+                style="@style/SearchInfoTextStyle"
+                android:text="@string/search_no_internet"/>
+
+            <Button android:id="@+id/search_update_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/ys_display_medium"
+                android:textAllCaps="false"
+                android:textColor="?attr/search_update_text_color"
+                android:textSize="16sp"
+                app:cornerRadius="54dp"
+                android:backgroundTint="?attr/search_update_background_color"
+                android:text="@string/search_update"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/search_nothing_found_layout"
+            style="@style/SearchInfoLayoutStyle"
+            android:visibility="gone"
+            android:orientation="vertical">
+
+            <ImageView
+                style="@style/SearchInfoIconStyle"
+                android:background="@drawable/ic_nothing_found"/>
+
+            <TextView
+                style="@style/SearchInfoTextStyle"
+                android:text="@string/search_nothing_found"/>
+        </LinearLayout>
+    </FrameLayout>
 
 </LinearLayout>
