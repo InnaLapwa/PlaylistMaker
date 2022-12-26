@@ -21,5 +21,9 @@
         <item name="search_color">@color/light_gray</item>
         <item name="track_artist_text_color">@color/light_gray</item>
         <item name="track_icon_color">@color/light_gray</item>
+        <item name="search_text_color">@color/deep_gray</item>
+        <item name="search_icon_color">@color/deep_gray</item>
+        <item name="search_update_text_color">@color/white</item>
+        <item name="search_update_background_color">@color/deep_gray</item>
     </style>
 </resources>

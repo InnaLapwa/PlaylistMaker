@@ -6,58 +6,68 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
-import android.widget.FrameLayout
-import android.widget.ImageView
+import android.widget.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
     companion object {
         const val SEARCH_TEXT = "SEARCH_TEXT"
-
-        val trackList = arrayListOf(
-            Track(
-                "Smells Like Teen Spirit",
-                "Nirvana",
-                "5:01",
-                "https://is5-ssl.mzstatic.com/image/thumb/Music115/v4/7b/58/c2/7b58c21a-2b51-2bb2-e59a-9bb9b96ad8c3/00602567924166.rgb.jpg/100x100bb.jpg"),
-            Track(
-                "Billie Jean",
-                "Michael Jackson",
-                "4:35",
-                "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/3d/9d/38/3d9d3811-71f0-3a0e-1ada-3004e56ff852/827969428726.jpg/100x100bb.jpg"),
-            Track(
-                "Stayin' Alive",
-                "Bee Gees",
-                "4:10",
-                "https://is4-ssl.mzstatic.com/image/thumb/Music115/v4/1f/80/1f/1f801fc1-8c0f-ea3e-d3e5-387c6619619e/16UMGIM86640.rgb.jpg/100x100bb.jpg"),
-            Track(
-                "Whole Lotta Love",
-                "Led Zeppelin",
-                "5:33",
-                "https://is2-ssl.mzstatic.com/image/thumb/Music62/v4/7e/17/e3/7e17e33f-2efa-2a36-e916-7f808576cf6b/mzm.fyigqcbs.jpg/100x100bb.jpg"),
-            Track(
-                "Sweet Child O'Mine",
-                "Guns N' Roses",
-                "5:03",
-                "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-5334fcb4bc16/18UMGIM24878.rgb.jpg/100x100bb.jpg")
-        )
     }
 
+    enum class SearchingResultStatus {
+        SUCCESS,
+        NOTHING_FOUND,
+        NO_INTERNET
+    }
+
+    private lateinit var searchRecyclerView: RecyclerView
+    private lateinit var inputSearch: EditText
+    private lateinit var somethingWentWrongLayout: LinearLayout
+    private lateinit var backLayout: FrameLayout
+    private lateinit var clearImage: ImageView
+    private lateinit var updateButton: Button
+    private lateinit var errorImage: ImageView
+    private lateinit var errorText: TextView
+
     private var inputText = ""
+    private val iTunesBaseUrl = "https://itunes.apple.com"
+    private val retrofit = Retrofit.Builder()
+        .baseUrl(iTunesBaseUrl)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    private val iTunesService = retrofit.create(ITunesSearchApi::class.java)
+    private val tracks = ArrayList<Track>()
+    private val trackAdapter = TrackAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        val inputSearch = findViewById<EditText>(R.id.et_search)
-        val clearImage = findViewById<ImageView>(R.id.iv_search_clear)
-        val backLayout = findViewById<FrameLayout>(R.id.fl_search_back)
+        initializeViews()
+        setListeners()
+        customizeRecyclerView()
+    }
 
-        inputSearch.setText(inputText)
+    private fun initializeViews() {
+        inputSearch = findViewById(R.id.et_search)
+        searchRecyclerView = findViewById(R.id.search_recyclerView)
+        somethingWentWrongLayout = findViewById(R.id.search_something_went_wrong)
+        backLayout = findViewById(R.id.fl_search_back)
+        clearImage = findViewById(R.id.iv_search_clear)
+        updateButton = findViewById(R.id.search_update_button)
+        errorImage = findViewById(R.id.search_error_image)
+        errorText = findViewById(R.id.search_error_text)
+    }
 
+    private fun setListeners() {
         backLayout.setOnClickListener {
             finish()
         }
@@ -66,9 +76,26 @@ class SearchActivity : AppCompatActivity() {
             inputSearch.setText("")
             val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(inputSearch.windowToken, 0)
+            tracks.clear()
+            onSearchingResult(SearchingResultStatus.SUCCESS)
         }
 
-        val simpleTextWatcher = object : TextWatcher {
+        updateButton.setOnClickListener {
+            findTracks()
+        }
+
+        inputSearch.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                inputMethodManager?.hideSoftInputFromWindow(inputSearch.windowToken, 0)
+
+                findTracks()
+                true
+            }
+            else false
+        }
+
+        val inputTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 // empty
             }
@@ -82,13 +109,63 @@ class SearchActivity : AppCompatActivity() {
                 // empty
             }
         }
-        inputSearch.addTextChangedListener(simpleTextWatcher)
 
-        val searchRecyclerView = findViewById<RecyclerView>(R.id.search_recyclerView)
-        searchRecyclerView.layoutManager = LinearLayoutManager(this)
+        inputSearch.setText(inputText)
+        inputSearch.addTextChangedListener(inputTextWatcher)
+    }
 
-        val trackAdapter = TrackAdapter(trackList)
+    private fun customizeRecyclerView() {
+        trackAdapter.tracks = tracks
+        searchRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         searchRecyclerView.adapter = trackAdapter
+    }
+
+    private fun findTracks() {
+        iTunesService.search(inputSearch.text.toString()).enqueue(object :
+            Callback<TracksResponse> {
+            override fun onResponse(call: Call<TracksResponse>,
+                                    response: Response<TracksResponse>
+            ) {
+                if (response.code() == 200) {
+                    tracks.clear()
+                    if (response.body()?.results?.isNotEmpty() == true) {
+                        tracks.addAll(response.body()?.results!!)
+                        onSearchingResult(SearchingResultStatus.SUCCESS)
+                    }
+                    if (tracks.isEmpty()) {
+                        onSearchingResult(SearchingResultStatus.NOTHING_FOUND)
+                    }
+                } else {
+                    onSearchingResult(SearchingResultStatus.NO_INTERNET)
+                }
+            }
+
+            override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
+                onSearchingResult(SearchingResultStatus.NO_INTERNET)
+            }
+        })
+    }
+
+    private fun onSearchingResult(resultStatus: SearchingResultStatus) {
+        when (resultStatus) {
+            SearchingResultStatus.SUCCESS -> {
+                somethingWentWrongLayout.visibility = View.GONE
+            }
+            SearchingResultStatus.NOTHING_FOUND -> {
+                somethingWentWrongLayout.visibility = View.VISIBLE
+                errorImage.setImageResource(R.drawable.ic_nothing_found)
+                errorText.text = getString(R.string.search_nothing_found)
+                updateButton.visibility = View.GONE
+            }
+            SearchingResultStatus.NO_INTERNET -> {
+                tracks.clear()
+                somethingWentWrongLayout.visibility = View.VISIBLE
+                errorImage.setImageResource(R.drawable.ic_no_internet)
+                errorText.text = getString(R.string.search_no_internet)
+                updateButton.visibility = View.VISIBLE
+            }
+        }
+        trackAdapter.notifyDataSetChanged()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
