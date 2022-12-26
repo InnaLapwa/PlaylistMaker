@@ -22,50 +22,77 @@ class SearchActivity : AppCompatActivity() {
         const val SEARCH_TEXT = "SEARCH_TEXT"
     }
 
+    enum class SearchingResultStatus {
+        SUCCESS,
+        NOTHING_FOUND,
+        NO_INTERNET
+    }
+
+    private lateinit var searchRecyclerView: RecyclerView
+    private lateinit var inputSearch: EditText
+    private lateinit var somethingWentWrongLayout: LinearLayout
+    private lateinit var backLayout: FrameLayout
+    private lateinit var clearImage: ImageView
+    private lateinit var updateButton: Button
+    private lateinit var errorImage: ImageView
+    private lateinit var errorText: TextView
+
     private var inputText = ""
     private val iTunesBaseUrl = "https://itunes.apple.com"
-
     private val retrofit = Retrofit.Builder()
         .baseUrl(iTunesBaseUrl)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-
-    private lateinit var tracksList: RecyclerView
-    private lateinit var queryInput: EditText
-    private lateinit var noInternetLayout: LinearLayout
-    private lateinit var nothingFoundLayout: LinearLayout
-
     private val iTunesService = retrofit.create(ITunesSearchApi::class.java)
     private val tracks = ArrayList<Track>()
-    private val adapter = TrackAdapter()
+    private val trackAdapter = TrackAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        queryInput = findViewById(R.id.et_search)
-        tracksList = findViewById(R.id.search_recyclerView)
-        noInternetLayout = findViewById(R.id.search_no_internet_layout)
-        nothingFoundLayout = findViewById(R.id.search_nothing_found_layout)
+        initializeViews()
+        setListeners()
+        customizeRecyclerView()
+    }
 
-        val backLayout = findViewById<FrameLayout>(R.id.fl_search_back)
+    private fun initializeViews() {
+        inputSearch = findViewById(R.id.et_search)
+        searchRecyclerView = findViewById(R.id.search_recyclerView)
+        somethingWentWrongLayout = findViewById(R.id.search_something_went_wrong)
+        backLayout = findViewById(R.id.fl_search_back)
+        clearImage = findViewById(R.id.iv_search_clear)
+        updateButton = findViewById(R.id.search_update_button)
+        errorImage = findViewById(R.id.search_error_image)
+        errorText = findViewById(R.id.search_error_text)
+    }
+
+    private fun setListeners() {
         backLayout.setOnClickListener {
             finish()
         }
 
-        val inputSearch = findViewById<EditText>(R.id.et_search)
-        val clearImage = findViewById<ImageView>(R.id.iv_search_clear)
         clearImage.setOnClickListener {
             inputSearch.setText("")
             val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(inputSearch.windowToken, 0)
             tracks.clear()
-            onSearchingResult()
+            onSearchingResult(SearchingResultStatus.SUCCESS)
         }
 
-        val updateButton = findViewById<Button>(R.id.search_update_button)
         updateButton.setOnClickListener {
             findTracks()
+        }
+
+        inputSearch.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                inputMethodManager?.hideSoftInputFromWindow(inputSearch.windowToken, 0)
+
+                findTracks()
+                true
+            }
+            else false
         }
 
         val inputTextWatcher = object : TextWatcher {
@@ -85,28 +112,16 @@ class SearchActivity : AppCompatActivity() {
 
         inputSearch.setText(inputText)
         inputSearch.addTextChangedListener(inputTextWatcher)
+    }
 
-        val searchRecyclerView = findViewById<RecyclerView>(R.id.search_recyclerView)
-        searchRecyclerView.layoutManager = LinearLayoutManager(this)
-
-        val trackAdapter = TrackAdapter()
+    private fun customizeRecyclerView() {
+        trackAdapter.tracks = tracks
+        searchRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         searchRecyclerView.adapter = trackAdapter
-
-        adapter.tracks = tracks
-        tracksList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        tracksList.adapter = adapter
-
-        queryInput.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                findTracks()
-                true
-            }
-            false
-        }
     }
 
     private fun findTracks() {
-        iTunesService.search(queryInput.text.toString()).enqueue(object :
+        iTunesService.search(inputSearch.text.toString()).enqueue(object :
             Callback<TracksResponse> {
             override fun onResponse(call: Call<TracksResponse>,
                                     response: Response<TracksResponse>
@@ -115,39 +130,42 @@ class SearchActivity : AppCompatActivity() {
                     tracks.clear()
                     if (response.body()?.results?.isNotEmpty() == true) {
                         tracks.addAll(response.body()?.results!!)
-                        onSearchingResult()
+                        onSearchingResult(SearchingResultStatus.SUCCESS)
                     }
                     if (tracks.isEmpty()) {
-                        onNothingFound()
+                        onSearchingResult(SearchingResultStatus.NOTHING_FOUND)
                     }
                 } else {
-                    onNoInternet()
+                    onSearchingResult(SearchingResultStatus.NO_INTERNET)
                 }
             }
 
             override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
-                onNoInternet()
+                onSearchingResult(SearchingResultStatus.NO_INTERNET)
             }
         })
     }
 
-    private fun onSearchingResult() {
-        adapter.notifyDataSetChanged()
-        noInternetLayout.visibility = View.GONE
-        nothingFoundLayout.visibility = View.GONE
-    }
-
-    private fun onNothingFound() {
-        adapter.notifyDataSetChanged()
-        noInternetLayout.visibility = View.GONE
-        nothingFoundLayout.visibility = View.VISIBLE
-    }
-
-    private fun onNoInternet() {
-        tracks.clear()
-        adapter.notifyDataSetChanged()
-        noInternetLayout.visibility = View.VISIBLE
-        nothingFoundLayout.visibility = View.GONE
+    private fun onSearchingResult(resultStatus: SearchingResultStatus) {
+        when (resultStatus) {
+            SearchingResultStatus.SUCCESS -> {
+                somethingWentWrongLayout.visibility = View.GONE
+            }
+            SearchingResultStatus.NOTHING_FOUND -> {
+                somethingWentWrongLayout.visibility = View.VISIBLE
+                errorImage.setImageResource(R.drawable.ic_nothing_found)
+                errorText.text = getString(R.string.search_nothing_found)
+                updateButton.visibility = View.GONE
+            }
+            SearchingResultStatus.NO_INTERNET -> {
+                tracks.clear()
+                somethingWentWrongLayout.visibility = View.VISIBLE
+                errorImage.setImageResource(R.drawable.ic_no_internet)
+                errorText.text = getString(R.string.search_no_internet)
+                updateButton.visibility = View.VISIBLE
+            }
+        }
+        trackAdapter.notifyDataSetChanged()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

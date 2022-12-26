@@ -19,7 +19,7 @@ class TrackViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
     fun bind(model: Track) {
         trackName.text = model.trackName
         artistName.text = model.artistName
-        trackTime.text = if (model.trackTime != null) SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTime.toInt()) else ""
+        trackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTime.toInt())
         Glide.with(itemView)
              .load(model.artworkUrl100)
              .centerCrop()
