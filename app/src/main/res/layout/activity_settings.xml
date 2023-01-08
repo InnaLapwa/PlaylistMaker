@@ -40,12 +40,11 @@
                 android:layout_gravity="center_vertical|end"
                 android:layout_marginEnd="6dp">
 
-                <androidx.appcompat.widget.SwitchCompat
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/themeSwitcher"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:checked="false"
-                    app:showText="false" />
+                    android:layout_gravity="center"/>
             </FrameLayout>
 
         </FrameLayout>

@@ -11,6 +11,6 @@
     <attr name="track_icon_color" format="reference"/>
     <attr name="search_text_color" format="reference"/>
     <attr name="search_icon_color" format="reference"/>
-    <attr name="search_update_text_color" format="reference"/>
-    <attr name="search_update_background_color" format="reference"/>
+    <attr name="search_button_text_color" format="reference"/>
+    <attr name="search_button_background_color" format="reference"/>
 </resources>
