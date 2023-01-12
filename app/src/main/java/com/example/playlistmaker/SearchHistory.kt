@@ -12,9 +12,7 @@ class SearchHistory(val sharedPrefs: SharedPreferences) {
     }
 
     fun add(track: Track) {
-        if (tracksList.contains(track)) {
-            tracksList.remove(track)
-        }
+        tracksList.remove(track)
         tracksList.add(0, track)
 
         if (tracksList.size > HISTORY_SIZE)
