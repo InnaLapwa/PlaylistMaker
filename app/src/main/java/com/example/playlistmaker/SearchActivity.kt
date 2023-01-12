@@ -36,6 +36,10 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var updateButton: Button
     private lateinit var errorImage: ImageView
     private lateinit var errorText: TextView
+    private lateinit var historyRecyclerView: RecyclerView
+    private lateinit var historyClearButton: Button
+    private lateinit var history: SearchHistory
+    private lateinit var historyLayout: LinearLayout
 
     private var inputText = ""
     private val iTunesBaseUrl = "https://itunes.apple.com"
@@ -46,14 +50,19 @@ class SearchActivity : AppCompatActivity() {
     private val iTunesService = retrofit.create(ITunesSearchApi::class.java)
     private val tracks = ArrayList<Track>()
     private val trackAdapter = TrackAdapter()
+    private val historyAdapter = TrackAdapter()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
+        history = SearchHistory(getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE))
+
         initializeViews()
         setListeners()
         customizeRecyclerView()
+        setHistoryVisibility()
     }
 
     private fun initializeViews() {
@@ -65,6 +74,9 @@ class SearchActivity : AppCompatActivity() {
         updateButton = findViewById(R.id.search_update_button)
         errorImage = findViewById(R.id.search_error_image)
         errorText = findViewById(R.id.search_error_text)
+        historyRecyclerView = findViewById(R.id.search_history_recyclerView)
+        historyClearButton = findViewById(R.id.search_history_clear)
+        historyLayout = findViewById(R.id.search_history_layout)
     }
 
     private fun setListeners() {
@@ -78,10 +90,17 @@ class SearchActivity : AppCompatActivity() {
             inputMethodManager?.hideSoftInputFromWindow(inputSearch.windowToken, 0)
             tracks.clear()
             onSearchingResult(SearchingResultStatus.SUCCESS)
+            setHistoryVisibility()
         }
 
         updateButton.setOnClickListener {
             findTracks()
+        }
+
+        historyClearButton.setOnClickListener {
+            history.clear()
+            historyAdapter.notifyDataSetChanged()
+            setHistoryVisibility()
         }
 
         inputSearch.setOnEditorActionListener { _, actionId, _ ->
@@ -103,6 +122,7 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 inputText = s.toString()
                 clearImage.visibility = clearButtonVisibility(s)
+                historyLayout.visibility = if (inputSearch.hasFocus() && s?.isEmpty() == true) View.VISIBLE else View.GONE
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -115,9 +135,18 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun customizeRecyclerView() {
+        trackAdapter.onItemClick = { track ->
+            history.add(track)
+            historyAdapter.notifyDataSetChanged()
+        }
+
         trackAdapter.tracks = tracks
         searchRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         searchRecyclerView.adapter = trackAdapter
+
+        historyAdapter.tracks = history.tracksList
+        historyRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        historyRecyclerView.adapter = historyAdapter
     }
 
     private fun findTracks() {
@@ -168,6 +197,10 @@ class SearchActivity : AppCompatActivity() {
         trackAdapter.notifyDataSetChanged()
     }
 
+    private fun setHistoryVisibility() {
+        historyLayout.visibility = if (history.tracksList.size > 0) View.VISIBLE else View.GONE
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(SEARCH_TEXT, inputText)
@@ -176,6 +209,7 @@ class SearchActivity : AppCompatActivity() {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         inputText = savedInstanceState.getString(SEARCH_TEXT, "")
+        setHistoryVisibility()
     }
 
     private fun clearButtonVisibility(s: CharSequence?) = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
