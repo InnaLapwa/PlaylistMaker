@@ -13,4 +13,6 @@
     <attr name="search_icon_color" format="reference"/>
     <attr name="search_button_text_color" format="reference"/>
     <attr name="search_button_background_color" format="reference"/>
+    <attr name="player_text_color" format="reference"/>
+    <attr name="player_play_icon_color" format="reference"/>
 </resources>

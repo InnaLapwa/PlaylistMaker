@@ -2,11 +2,9 @@ package com.example.playlistmaker
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.AdapterView
 import androidx.recyclerview.widget.RecyclerView
 
 class TrackAdapter() : RecyclerView.Adapter<TrackViewHolder> () {
-    //var tracks = ArrayList<Track>()
     var tracks = mutableListOf<Track>()
     var onItemClick: ((Track) -> Unit)? = null
 

@@ -86,4 +86,31 @@
         <item name="cornerRadius">54dp</item>
         <item name="android:backgroundTint">?attr/search_button_background_color</item>
     </style>
+
+    <style name="PlayerInfoStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">?attr/player_text_color</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+    </style>
+
+    <style name="PlayerMainInfoStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textColor">?attr/player_text_color</item>
+        <item name="android:lines">1</item>
+    </style>
+
+    <style name="PlayerButtonStyle">
+        <item name="android:layout_width">56dp</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:scaleType">centerCrop</item>
+    </style>
 </resources>
