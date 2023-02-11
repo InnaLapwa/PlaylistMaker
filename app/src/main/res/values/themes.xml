@@ -25,5 +25,7 @@
         <item name="search_icon_color">@color/deep_gray</item>
         <item name="search_button_text_color">@color/white</item>
         <item name="search_button_background_color">@color/deep_gray</item>
+        <item name="player_text_color">@color/deep_gray</item>
+        <item name="player_play_icon_color">@color/deep_gray</item>
     </style>
 </resources>

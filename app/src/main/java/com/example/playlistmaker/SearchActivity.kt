@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -138,6 +139,11 @@ class SearchActivity : AppCompatActivity() {
         trackAdapter.onItemClick = { track ->
             history.add(track)
             historyAdapter.notifyDataSetChanged()
+            openPlayer(track)
+        }
+
+        historyAdapter.onItemClick = { track ->
+            openPlayer(track)
         }
 
         trackAdapter.tracks = tracks
@@ -199,6 +205,12 @@ class SearchActivity : AppCompatActivity() {
 
     private fun setHistoryVisibility() {
         historyLayout.visibility = if (history.tracksList.size > 0) View.VISIBLE else View.GONE
+    }
+
+    private fun openPlayer(track: Track) {
+        val player = Intent(this, PlayerActivity::class.java)
+        player.putExtra("track", track)
+        startActivity(player)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
