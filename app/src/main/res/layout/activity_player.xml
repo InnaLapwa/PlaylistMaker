@@ -63,12 +63,12 @@
             android:id="@+id/add_to_playlist"
             style="@style/PlayerButtonStyle"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/player_barrier"
-            app:layout_constraintBottom_toTopOf="@id/player_current_time"
+            app:layout_constraintTop_toTopOf="@id/player_play"
+            app:layout_constraintBottom_toBottomOf="@id/player_play"
             app:srcCompat="@drawable/ic_add_to_playlist" />
 
         <ImageView
-            android:id="@+id/play"
+            android:id="@+id/player_play"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:scaleType="centerCrop"
@@ -81,19 +81,19 @@
             android:id="@+id/add_to_favorite"
             style="@style/PlayerButtonStyle"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/player_barrier"
-            app:layout_constraintBottom_toTopOf="@id/player_current_time"
+            app:layout_constraintTop_toTopOf="@id/player_play"
+            app:layout_constraintBottom_toBottomOf="@id/player_play"
             app:srcCompat="@drawable/ic_add_to_favorite" />
 
         <TextView
             android:id="@+id/player_current_time"
             style="@style/PlayerMainInfoStyle"
-            android:text="0:30"
+            android:text="00:00"
             android:textSize="16sp"
             android:paddingBottom="24dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/play" />
+            app:layout_constraintTop_toBottomOf="@+id/player_play" />
 
         <TextView
             android:id="@+id/player_track_time_text"
