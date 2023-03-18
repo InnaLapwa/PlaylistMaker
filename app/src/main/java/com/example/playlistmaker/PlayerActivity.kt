@@ -8,12 +8,10 @@ import android.os.Looper
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import org.w3c.dom.Text
 import java.text.SimpleDateFormat
 import java.util.Locale
 

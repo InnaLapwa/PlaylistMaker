@@ -28,15 +28,6 @@
             </FrameLayout>
         </LinearLayout>
 
-<!--        <ImageButton-->
-<!--            android:id="@+id/player_back"-->
-<!--            style="@style/Widget.AppCompat.Button.Borderless"-->
-<!--            android:layout_width="48dp"-->
-<!--            android:layout_height="48dp"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            app:srcCompat="@drawable/ic_arrow_back" />-->
-
         <ImageView
             android:id="@+id/player_cover"
             android:layout_width="0dp"
