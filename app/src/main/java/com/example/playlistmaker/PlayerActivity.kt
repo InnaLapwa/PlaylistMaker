@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import com.bumptech.glide.Glide
@@ -28,7 +30,7 @@ class PlayerActivity : AppCompatActivity() {
     private var playerState = STATE_DEFAULT
     private var mediaPlayer = MediaPlayer()
 
-    lateinit var back: ImageView
+    lateinit var back: FrameLayout
     lateinit var currentTrack: Track
     lateinit var trackName: TextView
     lateinit var artistName: TextView
