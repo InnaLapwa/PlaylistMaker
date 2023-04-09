@@ -1,14 +1,13 @@
 package com.example.playlistmaker
 
-import android.content.SharedPreferences
-import com.google.gson.Gson
+import com.example.playlistmaker.domain.TrackStorage
+import com.example.playlistmaker.domain.models.Track
 
-class SearchHistory(val sharedPrefs: SharedPreferences) {
+class SearchHistory(val trackStorage: TrackStorage) {
     var tracksList: MutableList<Track> = get().toMutableList()
 
     fun get(): Array<Track> {
-        val json = sharedPrefs.getString(SEARCH_HISTORY, null) ?: return emptyArray()
-        return Gson().fromJson(json, Array<Track>::class.java)
+        return trackStorage.getTrackHistory()
     }
 
     fun add(track: Track) {
@@ -18,17 +17,12 @@ class SearchHistory(val sharedPrefs: SharedPreferences) {
         if (tracksList.size > HISTORY_SIZE)
             tracksList.removeAt(HISTORY_SIZE)
 
-        val json = Gson().toJson(tracksList)
-        sharedPrefs.edit()
-            .putString(SEARCH_HISTORY, json)
-            .apply()
+        trackStorage.updateTrackHistory(tracksList)
     }
 
     fun clear() {
         tracksList.clear()
-        sharedPrefs.edit()
-            .remove(SEARCH_HISTORY)
-            .apply()
+        trackStorage.removeTrackHistory()
     }
 
     companion object {
