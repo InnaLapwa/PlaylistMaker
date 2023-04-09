@@ -76,7 +76,15 @@ class PlayerPresenter(
     }
 
     fun switchPlayPause() {
-        playerManager.switchPlayPause()
+        when (playerManager.getState()) {
+            PlayerState.PLAYING -> {
+                playerManager.pause()
+            }
+            PlayerState.PREPARED, PlayerState.PAUSED -> {
+                playerManager.start()
+            }
+            else -> {}
+        }
     }
 
     fun pausePlayer() {

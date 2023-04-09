@@ -8,7 +8,6 @@ interface PlayerManager {
     fun pause()
     fun release()
     fun setStateCallback(callback: (PlayerState) -> Unit)
-    fun switchPlayPause()
     fun getCurrentTime(): Int
     fun getState(): PlayerState
 }

@@ -38,18 +38,6 @@ class PlayerManagerImpl: PlayerManager {
         stateCallback = callback
     }
 
-    override fun switchPlayPause() {
-        when (state) {
-            PlayerState.PLAYING -> {
-                pause()
-            }
-            PlayerState.PREPARED, PlayerState.PAUSED -> {
-                start()
-            }
-            else -> {}
-        }
-    }
-
     override fun getCurrentTime(): Int {
         return mediaPlayer.currentPosition
     }
