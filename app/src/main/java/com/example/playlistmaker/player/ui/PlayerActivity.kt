@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui.player
+package com.example.playlistmaker.player.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -122,8 +122,8 @@ class PlayerActivity : AppCompatActivity(), PlayerView {
             .into(cover)
     }
 
-    override fun setAlbumGroupVisibility(visibile: Boolean) {
-        albumGroup.visibility = if (visibile) View.VISIBLE else View.GONE
+    override fun setAlbumGroupVisibility(visible: Boolean) {
+        albumGroup.visibility = if (visible) View.VISIBLE else View.GONE
     }
 
     override fun setPlayerStateStart() {

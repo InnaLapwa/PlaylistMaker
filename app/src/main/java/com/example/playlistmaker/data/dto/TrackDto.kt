@@ -1,4 +1,4 @@
-package com.example.playlistmaker.data
+package com.example.playlistmaker.data.dto
 
 import com.google.gson.annotations.SerializedName
 

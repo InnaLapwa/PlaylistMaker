@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.playlistmaker">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -17,19 +18,19 @@
         android:theme="@style/Theme.PlaylistMaker"
         tools:targetApi="31">
         <activity
-            android:name=".ui.player.PlayerActivity"
+            android:name=".player.ui.PlayerActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.search.SearchActivity"
+            android:name=".search.ui.SearchActivity"
             android:exported="false" />
         <activity
             android:name=".LibraryActivity"
             android:exported="false" />
         <activity
-            android:name=".SettingsActivity"
+            android:name=".settings.ui.SettingsActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".main.ui.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
