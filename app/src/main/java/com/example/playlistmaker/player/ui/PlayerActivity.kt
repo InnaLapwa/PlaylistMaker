@@ -3,144 +3,112 @@ package com.example.playlistmaker.player.ui
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.constraintlayout.widget.Group
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.presentation.player.PlayerPresenter
-import com.example.playlistmaker.presentation.player.PlayerView
+import com.example.playlistmaker.player.domain.models.TrackPlayerState
+import java.text.SimpleDateFormat
+import java.util.Locale
 
-class PlayerActivity : AppCompatActivity(), PlayerView {
-    private lateinit var presenter: PlayerPresenter
-
-    private lateinit var back: FrameLayout
-    private lateinit var trackName: TextView
-    private lateinit var artistName: TextView
-    private lateinit var trackTime: TextView
-    private lateinit var cover: ImageView
-    private lateinit var album: TextView
-    private lateinit var releaseDate: TextView
-    private lateinit var genre: TextView
-    private lateinit var country: TextView
-    private lateinit var albumGroup: Group
-    private lateinit var play: ImageView
-    private lateinit var currentTime: TextView
+class PlayerActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityPlayerBinding
+    private lateinit var viewModel: PlayerViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_player)
 
-        initializePresenter()
-        initializeViews()
+        binding = ActivityPlayerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        val currentTrack = intent.getSerializableExtra("track") as Track
+
+        viewModel = ViewModelProvider(this, PlayerViewModel.getViewModelFactory())[PlayerViewModel::class.java]
+        viewModel.preparePlayer(currentTrack.previewUrl)
+
+        setTrackInfo(currentTrack)
         setListeners()
-    }
 
-    private fun initializePresenter() {
-        presenter = Creator.providePresenter(
-            view = this,
-            currentTrack = intent.getSerializableExtra("track") as Track
-        )
-    }
+        viewModel.observeState().observe(this) {
+            render(it)
+        }
 
-    private fun initializeViews() {
-        back = findViewById(R.id.player_back)
-        trackName = findViewById(R.id.player_track_name)
-        artistName = findViewById(R.id.player_artist_name)
-        trackTime = findViewById(R.id.player_track_time_data)
-        cover = findViewById(R.id.player_cover)
-        album = findViewById(R.id.player_album_data)
-        releaseDate = findViewById(R.id.player_release_date_data)
-        genre = findViewById(R.id.player_genre_data)
-        country = findViewById(R.id.player_country_data)
-        albumGroup = findViewById(R.id.album_group)
-        play = findViewById(R.id.player_play)
-        currentTime = findViewById(R.id.player_current_time)
-
-        presenter.setTrackInfo()
+        viewModel.observeCurrentTime().observe(this) {
+            updateTime(it)
+        }
     }
 
     private fun setListeners() {
-        back.setOnClickListener {
+        binding.playerBack.setOnClickListener {
             finish()
         }
 
-        play.setOnClickListener {
-            presenter.switchPlayPause()
+        binding.playerPlay.setOnClickListener {
+            viewModel.switchPlayPause()
         }
+    }
+
+    private fun setTrackInfo(track: Track) {
+        binding.playerTrackName.text = track.trackName
+        binding.playerArtistName.text = track.artistName
+        binding.playerTrackTimeData.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTime.toInt())
+        binding.playerAlbumData.text = track.collectionName
+        binding.playerReleaseDateData.text = track.releaseDate.substring(0,4)
+        binding.playerGenreData.text = track.primaryGenreName
+        binding.playerCountryData.text = track.country
+        Glide.with(applicationContext)
+            .load(track.getCoverArtwork())
+            .centerCrop()
+            .transform(RoundedCorners(8))
+            .placeholder(R.drawable.ic_no_connection)
+            .into(binding.playerCover)
+
+        setAlbumGroupVisibility(track.collectionName != "")
     }
 
     override fun onPause() {
         super.onPause()
-        presenter.pausePlayer()
+        viewModel.pausePlayer()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        presenter.releasePlayer()
-        presenter.onViewDestroyed()
+        viewModel.releasePlayer()
     }
 
-    override fun setTrackName(name: String) {
-        trackName.text = name
+    private fun setAlbumGroupVisibility(visible: Boolean) {
+        binding.albumGroup.visibility = if (visible) View.VISIBLE else View.GONE
     }
 
-    override fun setArtistName(name: String) {
-        artistName.text = name
+    private fun render(state: TrackPlayerState) {
+        when (state) {
+            is TrackPlayerState.Prepared -> showPrepared()
+            is TrackPlayerState.Playing -> showPlaying()
+            is TrackPlayerState.Paused -> showPaused()
+            is TrackPlayerState.Default -> showDefault()
+        }
     }
 
-    override fun setTrackTime(time: String) {
-        trackTime.text = time
+    private fun updateTime(time: String) {
+        binding.playerCurrentTime.text = time
     }
 
-    override fun setAlbumName(name: String) {
-        album.text = name
+    private fun showDefault() {
+        binding.playerPlay.setImageResource(R.drawable.ic_play)
     }
 
-    override fun setReleaseDate(date: String) {
-        releaseDate.text = date
+    private fun showPrepared() {
+        binding.playerCurrentTime.text = "00:00"
+        binding.playerPlay.setImageResource(R.drawable.ic_play)
     }
 
-    override fun setGenre(name: String) {
-        genre.text = name
+    private fun showPlaying() {
+        binding.playerPlay.setImageResource(R.drawable.ic_pause)
     }
 
-    override fun setCountry(name: String) {
-        country.text = name
+    private fun showPaused() {
+        binding.playerPlay.setImageResource(R.drawable.ic_play)
     }
-
-    override fun setCover(coverPath: String) {
-        Glide.with(applicationContext)
-            .load(coverPath)
-            .centerCrop()
-            .transform(RoundedCorners(8))
-            .placeholder(R.drawable.ic_no_connection)
-            .into(cover)
-    }
-
-    override fun setAlbumGroupVisibility(visible: Boolean) {
-        albumGroup.visibility = if (visible) View.VISIBLE else View.GONE
-    }
-
-    override fun setPlayerStateStart() {
-        play.setImageResource(R.drawable.ic_pause)
-    }
-
-    override fun setPlayerStatePause() {
-        play.setImageResource(R.drawable.ic_play)
-    }
-
-    override fun setPlayerStatePrepared() {
-        currentTime.text = "00:00"
-        play.setImageResource(R.drawable.ic_play)
-    }
-
-    override fun setCurrentTime(time: String) {
-        currentTime.text = time
-    }
-
 }

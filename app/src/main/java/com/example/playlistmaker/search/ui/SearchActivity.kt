@@ -15,7 +15,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.TrackAdapter
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.models.TracksSearchState
@@ -63,7 +62,7 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        inputTextWatcher?.let { binding.etSearch.removeTextChangedListener(it) }
+        inputTextWatcher.let { binding.etSearch.removeTextChangedListener(it) }
     }
 
     private fun setListeners() {
@@ -139,7 +138,7 @@ class SearchActivity : AppCompatActivity() {
 
         binding.searchHistoryRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.searchHistoryRecyclerView.adapter = historyAdapter
-        historyAdapter.tracks = viewModel.getHistoryList() ?: mutableListOf()
+        historyAdapter.tracks = viewModel.getHistoryList()
     }
 
     private fun clearButtonVisibility(s: CharSequence?) = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
@@ -154,7 +153,7 @@ class SearchActivity : AppCompatActivity() {
         viewModel.setLastSearchText(savedInstanceState.getString(SEARCH_TEXT, ""))
     }
 
-    fun render(state: TracksSearchState) {
+    private fun render(state: TracksSearchState) {
         when (state) {
             is TracksSearchState.Loading -> showLoading()
             is TracksSearchState.NothingFound -> showNothingFound()
@@ -164,13 +163,13 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    fun showLoading() {
+    private fun showLoading() {
         binding.searchSomethingWentWrong.visibility = View.GONE
         binding.searchProgressBar.visibility = View.VISIBLE
         binding.searchHistoryLayout.visibility = View.GONE
     }
 
-    fun showSuccess(tracks: List<Track>) {
+    private fun showSuccess(tracks: List<Track>) {
         binding.searchProgressBar.visibility = View.GONE
         binding.searchSomethingWentWrong.visibility = View.GONE
         binding.searchHistoryLayout.visibility = View.GONE
@@ -181,7 +180,7 @@ class SearchActivity : AppCompatActivity() {
         trackAdapter.notifyDataSetChanged()
     }
 
-    fun showNothingFound() {
+    private fun showNothingFound() {
         binding.searchProgressBar.visibility = View.GONE
         binding.searchSomethingWentWrong.visibility = View.VISIBLE
         binding.searchErrorImage.setImageResource(R.drawable.ic_nothing_found)
@@ -191,7 +190,7 @@ class SearchActivity : AppCompatActivity() {
         trackAdapter.notifyDataSetChanged()
     }
 
-    fun showNoInternet() {
+    private fun showNoInternet() {
         binding.searchProgressBar.visibility = View.GONE
         trackAdapter.tracks.clear()
         binding.searchSomethingWentWrong.visibility = View.VISIBLE
@@ -202,14 +201,14 @@ class SearchActivity : AppCompatActivity() {
         trackAdapter.notifyDataSetChanged()
     }
 
-    fun showHistory() {
+    private fun showHistory() {
         binding.searchProgressBar.visibility = View.GONE
         binding.searchSomethingWentWrong.visibility = View.GONE
         binding.searchRecyclerView.visibility = View.GONE
-        binding.searchHistoryLayout.visibility = if (viewModel.isHistoryEmpty() ?: true) View.GONE else View.VISIBLE
+        binding.searchHistoryLayout.visibility = if (viewModel.isHistoryEmpty()) View.GONE else View.VISIBLE
     }
 
-    fun openPlayer(track: Track) {
+    private fun openPlayer(track: Track) {
         val player = Intent(this, PlayerActivity::class.java)
         player.putExtra("track", track)
         startActivity(player)

@@ -1,77 +1,61 @@
 package com.example.playlistmaker.settings.ui
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.App
-import com.example.playlistmaker.PLAYLIST_MAKER_PREFERENCES
-import com.example.playlistmaker.R
-import com.example.playlistmaker.THEME_SWITCHER
-import com.google.android.material.switchmaterial.SwitchMaterial
+import com.example.playlistmaker.databinding.ActivitySettingsBinding
+import com.example.playlistmaker.domain.models.Theme
+import com.example.playlistmaker.domain.models.ThemeSettings
 
 class SettingsActivity: AppCompatActivity() {
-    private lateinit var backLayout: FrameLayout
-    private lateinit var shareLayout: FrameLayout
-    private lateinit var supportLayout: FrameLayout
-    private lateinit var userAgreementLayout: FrameLayout
-    private lateinit var themeSwitcher: SwitchMaterial
+
+    private lateinit var binding: ActivitySettingsBinding
+    private lateinit var viewModel: SettingsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        viewModel = ViewModelProvider(this, SettingsViewModel.getViewModelFactory())[SettingsViewModel::class.java]
 
         initializeViews()
         setListeners()
     }
 
     private fun initializeViews() {
-        backLayout = findViewById(R.id.fl_settings_back)
-        shareLayout = findViewById(R.id.shareLayout)
-        supportLayout = findViewById(R.id.supportLayout)
-        userAgreementLayout = findViewById(R.id.userAgreementLayout)
-        themeSwitcher = findViewById(R.id.themeSwitcher)
-
-        val sharedPrefs = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
-        themeSwitcher.isChecked = sharedPrefs.getBoolean(THEME_SWITCHER, false)
+        binding.themeSwitcher.isChecked = viewModel.isNightModeChecked()
     }
 
     private fun setListeners() {
-        backLayout.setOnClickListener {
+        binding.flSettingsBack.setOnClickListener {
             finish()
         }
 
-        shareLayout.setOnClickListener {
-            Intent(Intent.ACTION_SEND).apply {
-                type = "text/plain"
-                putExtra(Intent.EXTRA_TEXT, getString(R.string.share_app_link))
-                startActivity(Intent.createChooser(this, "Share with:"))
-            }
+        binding.shareLayout.setOnClickListener {
+            startActivity(viewModel.shareApp())
         }
 
-        supportLayout.setOnClickListener {
-            Intent(Intent.ACTION_SENDTO).apply {
-                data = Uri.parse("mailto:")
-                putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.share_app_email)))
-                putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_app_subject))
-                putExtra(Intent.EXTRA_TEXT, getString(R.string.share_app_message))
-                startActivity(this)
-            }
+        binding.supportLayout.setOnClickListener {
+            startActivity(viewModel.openSupport())
         }
 
-        userAgreementLayout.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.user_agreement_link))))
+        binding.userAgreementLayout.setOnClickListener {
+            startActivity(viewModel.openTerms())
         }
 
-        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+        binding.themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
             (applicationContext as App).switchTheme(checked)
-
-            val sharedPrefs = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
-            sharedPrefs.edit()
-                .putBoolean(THEME_SWITCHER, checked)
-                .apply()
+            viewModel.updateThemeSetting(getThemeSettings(checked))
         }
+    }
+
+    private fun getThemeSettings(checked: Boolean): ThemeSettings {
+        return ThemeSettings(when (checked) {
+            true -> Theme.DARK
+            else -> Theme.LIGHT
+        })
     }
 
 }

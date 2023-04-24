@@ -26,7 +26,7 @@ class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRep
         }
     }
 
-    fun convertTrackDto(trackDto: TrackDto) = Track(
+    private fun convertTrackDto(trackDto: TrackDto) = Track(
         trackName = trackDto.trackName,
         artistName = trackDto.artistName,
         trackTime = trackDto.trackTime,

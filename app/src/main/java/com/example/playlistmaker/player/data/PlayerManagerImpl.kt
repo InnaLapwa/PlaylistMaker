@@ -1,7 +1,7 @@
 package com.example.playlistmaker.player.data
 
 import android.media.MediaPlayer
-import com.example.playlistmaker.domain.PlayerManager
+import com.example.playlistmaker.player.domain.PlayerManager
 import com.example.playlistmaker.domain.models.PlayerState
 
 class PlayerManagerImpl: PlayerManager {
@@ -10,10 +10,11 @@ class PlayerManagerImpl: PlayerManager {
     private var stateCallback: ((PlayerState) -> Unit)? = null
 
     override fun prepare(previewUrl: String) {
+        mediaPlayer = MediaPlayer()
         mediaPlayer.setDataSource(previewUrl)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
-            state = PlayerState.PREPARED
+            updateState(PlayerState.PREPARED)
         }
         mediaPlayer.setOnCompletionListener {
             updateState(PlayerState.PREPARED)
@@ -32,6 +33,7 @@ class PlayerManagerImpl: PlayerManager {
 
     override fun release() {
         mediaPlayer.release()
+        updateState(PlayerState.DEFAULT)
     }
 
     override fun setStateCallback(callback: (PlayerState) -> Unit) {

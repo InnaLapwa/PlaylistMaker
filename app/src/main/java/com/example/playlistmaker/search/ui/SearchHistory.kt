@@ -1,13 +1,13 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.search.ui
 
-import com.example.playlistmaker.domain.TrackStorage
+import com.example.playlistmaker.domain.LocalStorage
 import com.example.playlistmaker.domain.models.Track
 
-class SearchHistory(val trackStorage: TrackStorage) {
+class SearchHistory(val localStorage: LocalStorage) {
     var tracksList: MutableList<Track> = get().toMutableList()
 
     fun get(): Array<Track> {
-        return trackStorage.getTrackHistory()
+        return localStorage.getTrackHistory()
     }
 
     fun add(track: Track) {
@@ -17,12 +17,12 @@ class SearchHistory(val trackStorage: TrackStorage) {
         if (tracksList.size > HISTORY_SIZE)
             tracksList.removeAt(HISTORY_SIZE)
 
-        trackStorage.updateTrackHistory(tracksList)
+        localStorage.updateTrackHistory(tracksList)
     }
 
     fun clear() {
         tracksList.clear()
-        trackStorage.removeTrackHistory()
+        localStorage.removeTrackHistory()
     }
 
     companion object {

@@ -1,38 +1,36 @@
 package com.example.playlistmaker.sharing.domain.impl
 
-import com.example.playlistmaker.R
+import android.content.Intent
 import com.example.playlistmaker.sharing.data.ExternalNavigator
+import com.example.playlistmaker.sharing.data.SharingRepository
 import com.example.playlistmaker.sharing.domain.SharingInteractor
 import com.example.playlistmaker.sharing.domain.model.EmailData
 
 class SharingInteractorImpl(
     private val externalNavigator: ExternalNavigator,
+    private val repository: SharingRepository
 ) : SharingInteractor {
-    override fun shareApp() {
-        externalNavigator.shareLink(getShareAppLink())
+    override fun shareApp(): Intent {
+        return externalNavigator.shareLink(getShareAppLink())
     }
 
-    override fun openTerms() {
-        externalNavigator.openLink(getTermsLink())
+    override fun openTerms(): Intent {
+        return externalNavigator.openLink(getTermsLink())
     }
 
-    override fun openSupport() {
-        externalNavigator.openEmail(getSupportEmailData())
+    override fun openSupport(): Intent {
+        return externalNavigator.openEmail(getSupportEmailData())
     }
 
     private fun getShareAppLink(): String {
-        return R.string.share_app_link.toString()
+        return repository.getShareAppLink()
     }
 
     private fun getSupportEmailData(): EmailData {
-        return EmailData(
-            R.string.share_app_email.toString(),
-            R.string.share_app_subject.toString(),
-            R.string.share_app_message.toString()
-        )
+        return repository.getSupportEmailData()
     }
 
     private fun getTermsLink(): String {
-        return R.string.user_agreement_link.toString()
+        return repository.getTermsLink()
     }
 }

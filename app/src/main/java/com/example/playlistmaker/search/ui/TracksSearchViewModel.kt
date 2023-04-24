@@ -12,7 +12,6 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.App
-import com.example.playlistmaker.SearchHistory
 import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.search.domain.api.TracksInteractor
@@ -42,7 +41,7 @@ class TracksSearchViewModel(application: Application): AndroidViewModel(applicat
     fun observeState(): LiveData<TracksSearchState> = stateLiveData
 
     fun onCreate() {
-        history = SearchHistory(App.instance.getTrackStorage())
+        history = SearchHistory(App.instance.getLocalStorage())
     }
 
     override fun onCleared() {
