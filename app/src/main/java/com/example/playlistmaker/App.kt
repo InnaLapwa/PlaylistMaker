@@ -2,17 +2,14 @@ package com.example.playlistmaker
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.data.TrackRepositoryImpl
-import com.example.playlistmaker.data.TrackStorageImpl
-import com.example.playlistmaker.domain.TrackRepository
-import com.example.playlistmaker.domain.TrackStorage
+import com.example.playlistmaker.data.LocalStorageImpl
+import com.example.playlistmaker.domain.LocalStorage
 import com.google.gson.Gson
 
 class App : Application() {
     private var darkTheme = false
 
-    private lateinit var trackRepository: TrackRepositoryImpl
-    private lateinit var trackStorage: TrackStorageImpl
+    private lateinit var localStorage: LocalStorageImpl
     private var gson = Gson()
 
     override fun onCreate() {
@@ -23,8 +20,7 @@ class App : Application() {
         darkTheme = sharedPrefs.getBoolean(THEME_SWITCHER, false)
         switchTheme(darkTheme)
 
-        trackStorage = TrackStorageImpl(sharedPrefs, gson)
-        trackRepository = TrackRepositoryImpl()
+        localStorage = LocalStorageImpl(sharedPrefs, gson)
     }
 
     fun switchTheme(darkThemeEnabled: Boolean) {
@@ -38,12 +34,8 @@ class App : Application() {
         )
     }
 
-    fun getTrackStorage(): TrackStorage {
-        return trackStorage
-    }
-
-    fun getTrackRepository(): TrackRepository {
-        return trackRepository
+    fun getLocalStorage(): LocalStorage {
+        return localStorage
     }
 
     companion object {
