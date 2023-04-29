@@ -10,7 +10,7 @@ import com.example.playlistmaker.domain.models.Theme
 import com.example.playlistmaker.domain.models.ThemeSettings
 import com.google.gson.Gson
 
-class LocalStorageImpl(val sharedPrefs: SharedPreferences, val gson: Gson): LocalStorage {
+class LocalStorageImpl(private val sharedPrefs: SharedPreferences, private val gson: Gson): LocalStorage {
 
     override fun removeTrackHistory() {
         sharedPrefs.edit()

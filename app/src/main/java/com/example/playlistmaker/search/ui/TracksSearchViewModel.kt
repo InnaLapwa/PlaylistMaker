@@ -1,37 +1,23 @@
 package com.example.playlistmaker.search.ui
 
-import android.app.Application
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.playlistmaker.App
-import com.example.playlistmaker.creator.Creator
+import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.models.TracksSearchState
 
-class TracksSearchViewModel(application: Application): AndroidViewModel(application) {
-    private val tracksInteractor = Creator.provideTracksInteractor(getApplication<Application>())
+class TracksSearchViewModel(private val tracksInteractor: TracksInteractor,
+                            private val history: SearchHistory): ViewModel() {
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private val SEARCH_REQUEST_TOKEN = Any()
-
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                TracksSearchViewModel(this[APPLICATION_KEY] as Application)
-            }
-        }
     }
 
-    private lateinit var history: SearchHistory
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -39,10 +25,6 @@ class TracksSearchViewModel(application: Application): AndroidViewModel(applicat
 
     private val stateLiveData = MutableLiveData<TracksSearchState>()
     fun observeState(): LiveData<TracksSearchState> = stateLiveData
-
-    fun onCreate() {
-        history = SearchHistory(App.instance.getLocalStorage())
-    }
 
     override fun onCleared() {
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
