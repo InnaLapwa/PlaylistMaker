@@ -17,7 +17,7 @@
 
         <TextView
             style="@style/HeaderTextStyle"
-            android:text="Медиатека"/>
+            android:text="@string/library_name"/>
     </LinearLayout>
 
     <com.google.android.material.tabs.TabLayout

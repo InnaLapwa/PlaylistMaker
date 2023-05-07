@@ -26,11 +26,11 @@
     <dimen name="library_empty_icon_size">120dp</dimen>
 
     
-    <dimen name="title_text_size">24sp</dimen>
+    <dimen name="title_text_size">22sp</dimen>
     <dimen name="main_button_text_size">24sp</dimen>
     <dimen name="settings_list_text_size">16sp</dimen>
     <dimen name="search_track_text_size">16sp</dimen>
     <dimen name="search_track_info_text_size">12sp</dimen>
     <dimen name="search_info_text_size">20sp</dimen>
-    <dimen name="library_text_size">20sp</dimen>
+    <dimen name="library_text_size">19sp</dimen>
 </resources>
