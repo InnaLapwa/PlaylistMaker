@@ -3,6 +3,7 @@
     <string name="button_search_name">Поиск</string>
     <string name="button_library_name">Медиатека</string>
     <string name="button_settings_name">Настройки</string>
+    <string name="library_name">Медиатека</string>
 
     <string name="settings_dark_mode">Темная тема</string>
     <string name="settings_share_app">Поделиться приложением</string>
@@ -28,4 +29,10 @@
     <string name="player_release_date">Год</string>
     <string name="player_genre">Жанр</string>
     <string name="player_country">Страна</string>
+
+    <string name="library_favorites">Избранные треки</string>
+    <string name="library_playlists">Плейлисты</string>
+    <string name="library_favorites_empty">Ваша медиатека пуста</string>
+    <string name="library_playlists_empty">Вы не создали ни одного плейлиста</string>
+    <string name="library_new_playlist">Новый плейлист</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.example.playlistmaker.di
 
 import android.content.Context.MODE_PRIVATE
+import com.example.playlistmaker.PLAYLIST_MAKER_PREFERENCES
 import com.example.playlistmaker.data.NetworkClient
 import com.example.playlistmaker.data.network.ITunesSearchApi
 import com.example.playlistmaker.data.network.RetrofitNetworkClient
@@ -28,7 +29,7 @@ val dataModule = module {
 
     single {
         androidContext()
-            .getSharedPreferences("PLAYLIST_MAKER_PREFERENCES", MODE_PRIVATE)
+            .getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
     }
 
     factory { Gson() }
