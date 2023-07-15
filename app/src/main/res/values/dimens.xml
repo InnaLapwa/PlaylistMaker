@@ -33,4 +33,5 @@
     <dimen name="search_track_info_text_size">12sp</dimen>
     <dimen name="search_info_text_size">20sp</dimen>
     <dimen name="library_text_size">19sp</dimen>
+    <dimen name="root_bottom_navigation_text_size">12sp</dimen>
 </resources>
