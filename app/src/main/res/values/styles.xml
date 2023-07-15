@@ -135,4 +135,11 @@
         <item name="android:textColor">?attr/text_color</item>
         <item name="android:textSize">@dimen/library_text_size</item>
     </style>
+
+    <style name="BottomNavigationStyle">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">12sp</item>
+        <item name="backgroundTint">?attr/background_color</item>
+        <item name="itemRippleColor">@color/blue</item>
+    </style>
 </resources>
