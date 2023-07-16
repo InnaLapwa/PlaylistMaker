@@ -1,15 +1,14 @@
 package com.example.playlistmaker.player.ui
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.playlistmaker.domain.models.PlayerState
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.player.domain.PlayerManager
-import com.example.playlistmaker.player.domain.models.TrackPlayerState
-import java.text.SimpleDateFormat
-import java.util.Locale
+import com.example.playlistmaker.player.domain.models.PlayerState
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class PlayerViewModel(private val playerManager: PlayerManager): ViewModel() {
 
@@ -17,91 +16,63 @@ class PlayerViewModel(private val playerManager: PlayerManager): ViewModel() {
         private const val PLAYING_TIME_UPDATING_DELAY = 300L
     }
 
-    private val stateLiveData = MutableLiveData<TrackPlayerState>()
-    fun observeState(): LiveData<TrackPlayerState> = stateLiveData
+    private var timerJob: Job? = null
 
-    private val currentTimeLiveData = MutableLiveData<String>()
-    fun observeCurrentTime(): LiveData<String> = currentTimeLiveData
-
-    private val handler = Handler(Looper.getMainLooper())
-    private val timeRunnable = Runnable { startUpdateTime() }
+    private val playerState = MutableLiveData<PlayerState>(PlayerState.Default())
+    fun observePlayerState(): LiveData<PlayerState> = playerState
 
     init {
-         playerManager.setStateCallback { playerState ->
-             when (playerState) {
-                 PlayerState.PREPARED -> {
-                     handler.removeCallbacks(timeRunnable)
-                     renderState(TrackPlayerState.Prepared)
-                 }
-                 PlayerState.PLAYING -> {
-                     renderState(TrackPlayerState.Playing)
-                     startUpdateTime()
-                 }
-                 PlayerState.PAUSED -> {
-                     renderState(TrackPlayerState.Paused)
-                 }
-                 PlayerState.DEFAULT ->
-                     renderState(TrackPlayerState.Default)
-             }
-         }
-    }
-
-    private fun startUpdateTime() {
-        handler.postDelayed(
-            object : Runnable {
-                override fun run() {
-                    if (playerManager.getState() == PlayerState.PLAYING) {
-                        updateCurrentTime()
-                        handler.postDelayed(
-                            this,
-                            PLAYING_TIME_UPDATING_DELAY
-                        )
-                    }
-                }
-            },
-            PLAYING_TIME_UPDATING_DELAY
-        )
-    }
-
-    fun switchPlayPause() {
-        when (playerManager.getState()) {
-            PlayerState.PLAYING -> {
-                playerManager.pause()
-                renderState(TrackPlayerState.Paused)
-                startUpdateTime()
-            }
-            PlayerState.PREPARED, PlayerState.PAUSED -> {
-                playerManager.start()
-                renderState(TrackPlayerState.Playing)
-            }
-            else -> {}
+        playerManager.setStateCallback { playerState ->
+            renderState(playerState)
         }
+    }
+
+    fun onPlayButtonClicked() {
+        when(playerState.value) {
+            is PlayerState.Playing -> {
+                pausePlayer()
+            }
+            is PlayerState.Prepared, is PlayerState.Paused -> {
+                startPlayer()
+            }
+            else -> { }
+        }
+    }
+
+    private fun startTimer() {
+        timerJob = viewModelScope.launch {
+            while (playerManager.isPlaying()) {
+                delay(PLAYING_TIME_UPDATING_DELAY)
+                if (playerState.value is PlayerState.Playing)
+                    playerState.postValue(PlayerState.Playing(playerManager.getCurrentPlayerPosition()))
+            }
+        }
+    }
+
+    private fun startPlayer() {
+        playerManager.start()
+        startTimer()
     }
 
     fun pausePlayer() {
         playerManager.pause()
-        handler.removeCallbacks(timeRunnable)
+        timerJob?.cancel()
     }
 
     fun releasePlayer() {
         playerManager.release()
-        handler.removeCallbacks(timeRunnable)
     }
 
     fun preparePlayer(previewUrl: String) {
         playerManager.prepare(previewUrl)
     }
 
-    private fun renderState(state: TrackPlayerState) {
-        stateLiveData.postValue(state)
-    }
-
-    fun updateCurrentTime() {
-        currentTimeLiveData.postValue(SimpleDateFormat("mm:ss", Locale.getDefault()).format(playerManager.getCurrentTime()))
-    }
-
     override fun onCleared() {
         super.onCleared()
         releasePlayer()
+    }
+
+    private fun renderState(state: PlayerState) {
+        playerState.postValue(state)
     }
 }

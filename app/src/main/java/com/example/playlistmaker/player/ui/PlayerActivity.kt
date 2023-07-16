@@ -8,7 +8,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.player.domain.models.TrackPlayerState
+import com.example.playlistmaker.player.domain.models.PlayerState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -30,12 +30,13 @@ class PlayerActivity : AppCompatActivity() {
         setTrackInfo(currentTrack)
         setListeners()
 
-        viewModel.observeState().observe(this) {
-            render(it)
-        }
-
-        viewModel.observeCurrentTime().observe(this) {
-            updateTime(it)
+        viewModel.observePlayerState().observe(this) {
+            binding.playerPlay.isEnabled = it.isPlayButtonEnabled
+            binding.playerCurrentTime.text = it.progress
+            when (it) {
+                is PlayerState.Playing -> binding.playerPlay.setImageResource(R.drawable.ic_pause)
+                else -> binding.playerPlay.setImageResource(R.drawable.ic_play)
+            }
         }
     }
 
@@ -45,7 +46,7 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         binding.playerPlay.setOnClickListener {
-            viewModel.switchPlayPause()
+            viewModel.onPlayButtonClicked()
         }
     }
 
@@ -79,35 +80,5 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun setAlbumGroupVisibility(visible: Boolean) {
         binding.albumGroup.visibility = if (visible) View.VISIBLE else View.GONE
-    }
-
-    private fun render(state: TrackPlayerState) {
-        when (state) {
-            is TrackPlayerState.Prepared -> showPrepared()
-            is TrackPlayerState.Playing -> showPlaying()
-            is TrackPlayerState.Paused -> showPaused()
-            is TrackPlayerState.Default -> showDefault()
-        }
-    }
-
-    private fun updateTime(time: String) {
-        binding.playerCurrentTime.text = time
-    }
-
-    private fun showDefault() {
-        binding.playerPlay.setImageResource(R.drawable.ic_play)
-    }
-
-    private fun showPrepared() {
-        binding.playerCurrentTime.text = "00:00"
-        binding.playerPlay.setImageResource(R.drawable.ic_play)
-    }
-
-    private fun showPlaying() {
-        binding.playerPlay.setImageResource(R.drawable.ic_pause)
-    }
-
-    private fun showPaused() {
-        binding.playerPlay.setImageResource(R.drawable.ic_play)
     }
 }
