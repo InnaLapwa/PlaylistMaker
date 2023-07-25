@@ -18,7 +18,7 @@ import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.models.TracksSearchState
-import com.example.playlistmaker.util.debounce
+import com.example.playlistmaker.util.debounceActionDelay
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment: Fragment() {
@@ -43,7 +43,9 @@ class SearchFragment: Fragment() {
         setListeners()
         customizeRecyclerView()
 
-        onTrackClickDebounce = debounce<Track>(CLICK_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope, false) { track ->
+        onTrackClickDebounce = debounceActionDelay<Track>(CLICK_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope, false) { track ->
+            viewModel.addTrackToHistory(track)
+            historyAdapter.notifyDataSetChanged()
             openPlayer(track)
         }
 
@@ -115,14 +117,10 @@ class SearchFragment: Fragment() {
 
     private fun customizeRecyclerView() {
         trackAdapter.onItemClick = { track ->
-            viewModel.addTrackToHistory(track)
-            historyAdapter.notifyDataSetChanged()
             onTrackClickDebounce(track)
         }
 
         historyAdapter.onItemClick = { track ->
-            viewModel.addTrackToHistory(track)
-            historyAdapter.notifyDataSetChanged()
             onTrackClickDebounce(track)
         }
 

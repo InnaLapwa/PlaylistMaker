@@ -22,13 +22,12 @@ class RetrofitNetworkClient(
             return Response().apply { resultCode = 400 }
         }
 
-        return withContext(Dispatchers.IO) {
-            try {
-                val response = iTunesService.search(dto.expression)
-                response.apply { resultCode = 200 }
-            } catch (e: Throwable) {
-                Response().apply { resultCode = -1 }
-            }
+        try {
+            val response = iTunesService.search(dto.expression)
+            response.apply { resultCode = 200 }
+            return response
+        } catch (e: Throwable) {
+            return Response().apply { resultCode = -1 }
         }
     }
 

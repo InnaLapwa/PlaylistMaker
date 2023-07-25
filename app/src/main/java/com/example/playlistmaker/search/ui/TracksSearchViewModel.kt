@@ -7,7 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.models.TracksSearchState
-import com.example.playlistmaker.util.debounce
+import com.example.playlistmaker.util.debounceDelayAction
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class TracksSearchViewModel(private val tracksInteractor: TracksInteractor,
@@ -18,8 +19,9 @@ class TracksSearchViewModel(private val tracksInteractor: TracksInteractor,
     }
 
     private var lastSearchText: String? = null
+    private var searchJob: Job? = null
 
-    private val tracksSearchDebounce = debounce<String>(SEARCH_DEBOUNCE_DELAY, viewModelScope, true) { changedText ->
+    private val tracksSearchDebounce = debounceDelayAction<String>(SEARCH_DEBOUNCE_DELAY, viewModelScope, true) { changedText ->
         findTracks(changedText)
     }
 
@@ -36,12 +38,14 @@ class TracksSearchViewModel(private val tracksInteractor: TracksInteractor,
 
         renderState(TracksSearchState.Loading)
 
-        viewModelScope.launch {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
             tracksInteractor
                 .searchTracks(newSearchText)
                 .collect { pair ->
                     processResult(pair.first, pair.second)
                 }
+            searchJob = null
         }
     }
 
