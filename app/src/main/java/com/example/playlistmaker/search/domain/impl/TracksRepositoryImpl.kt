@@ -1,27 +1,30 @@
 package com.example.playlistmaker.search.domain.impl
 
-import com.example.playlistmaker.creator.Resource
+import com.example.playlistmaker.util.Resource
 import com.example.playlistmaker.data.dto.TrackDto
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.data.NetworkClient
 import com.example.playlistmaker.data.dto.TracksSearchRequest
 import com.example.playlistmaker.data.dto.TracksSearchResponse
 import com.example.playlistmaker.search.domain.api.TracksRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRepository {
 
-    override fun searchTracks(expression: String): Resource<List<Track>> {
+    override fun searchTracks(expression: String): Flow<Resource<List<Track>>> = flow {
         val response = networkClient.doRequest(TracksSearchRequest(expression))
-        return when (response.resultCode) {
+
+        when (response.resultCode) {
             -1 -> {
-                Resource.Error("Проверьте подключение к интернету")
+                emit(Resource.Error("Проверьте подключение к интернету"))
             }
             200 -> {
-                Resource.Success((response as TracksSearchResponse).results.map {
-                    convertTrackDto(it)})
+                emit(Resource.Success((response as TracksSearchResponse).results.map {
+                    convertTrackDto(it)}))
             }
             else -> {
-                Resource.Error("Ошибка сервера")
+                emit(Resource.Error("Ошибка сервера"))
             }
         }
     }

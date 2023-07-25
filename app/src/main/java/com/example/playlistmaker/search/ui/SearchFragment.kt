@@ -3,8 +3,6 @@ package com.example.playlistmaker.search.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -13,12 +11,14 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.models.TracksSearchState
+import com.example.playlistmaker.util.debounceActionDelay
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment: Fragment() {
@@ -28,10 +28,9 @@ class SearchFragment: Fragment() {
     private val trackAdapter = TrackAdapter()
     private val historyAdapter = TrackAdapter()
 
-    private var isClickAllowed = true
-    private val handler = Handler(Looper.getMainLooper())
-
     private lateinit var inputTextWatcher: TextWatcher
+
+    private lateinit var onTrackClickDebounce: (Track) -> Unit
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentSearchBinding.inflate(inflater, container, false)
@@ -43,6 +42,12 @@ class SearchFragment: Fragment() {
 
         setListeners()
         customizeRecyclerView()
+
+        onTrackClickDebounce = debounceActionDelay<Track>(CLICK_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope, false) { track ->
+            viewModel.addTrackToHistory(track)
+            historyAdapter.notifyDataSetChanged()
+            openPlayer(track)
+        }
 
         binding.ivSearchClear.visibility = clearButtonVisibility(viewModel.getLastSearchText())
 
@@ -112,17 +117,11 @@ class SearchFragment: Fragment() {
 
     private fun customizeRecyclerView() {
         trackAdapter.onItemClick = { track ->
-            viewModel.addTrackToHistory(track)
-            historyAdapter.notifyDataSetChanged()
-            if (clickDebounce()) {
-                openPlayer(track)
-            }
+            onTrackClickDebounce(track)
         }
 
         historyAdapter.onItemClick = { track ->
-            if (clickDebounce()) {
-                openPlayer(track)
-            }
+            onTrackClickDebounce(track)
         }
 
         binding.searchRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
@@ -194,17 +193,6 @@ class SearchFragment: Fragment() {
         val player = Intent(requireContext(), PlayerActivity::class.java)
         player.putExtra("track", track)
         startActivity(player)
-    }
-
-    private fun clickDebounce() : Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true },
-                CLICK_DEBOUNCE_DELAY
-            )
-        }
-        return current
     }
 
     companion object {
