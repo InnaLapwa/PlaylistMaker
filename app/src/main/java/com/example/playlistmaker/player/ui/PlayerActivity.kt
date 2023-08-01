@@ -17,15 +17,21 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPlayerBinding
     private val viewModel by viewModel<PlayerViewModel>()
 
+    private lateinit var currentTrack: Track
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val currentTrack = intent.getSerializableExtra("track") as Track
+        currentTrack = intent.getSerializableExtra("track") as Track
 
         viewModel.preparePlayer(currentTrack.previewUrl)
+
+        viewModel.observeFavoriteState().observe(this) {
+            binding.addToFavorite.setImageResource(if (it) R.drawable.ic_in_favorite else R.drawable.ic_add_to_favorite)
+        }
 
         setTrackInfo(currentTrack)
         setListeners()
@@ -48,6 +54,10 @@ class PlayerActivity : AppCompatActivity() {
         binding.playerPlay.setOnClickListener {
             viewModel.onPlayButtonClicked()
         }
+
+        binding.addToFavorite.setOnClickListener {
+            viewModel.onFavoriteClicked(currentTrack)
+       }
     }
 
     private fun setTrackInfo(track: Track) {
@@ -66,6 +76,8 @@ class PlayerActivity : AppCompatActivity() {
             .into(binding.playerCover)
 
         setAlbumGroupVisibility(track.collectionName != "")
+
+        binding.addToFavorite.setImageResource(if (currentTrack.isFavorite) R.drawable.ic_in_favorite else R.drawable.ic_add_to_favorite)
     }
 
     override fun onPause() {

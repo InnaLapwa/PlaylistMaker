@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.library.favorites.domain.db.FavoritesRepository
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.models.TracksSearchState
 import com.example.playlistmaker.util.debounceDelayAction
@@ -12,7 +13,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class TracksSearchViewModel(private val tracksInteractor: TracksInteractor,
-                            private val history: SearchHistory): ViewModel() {
+                            private val history: SearchHistory,
+                            private val favoritesRepository: FavoritesRepository): ViewModel() {
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
@@ -27,6 +29,9 @@ class TracksSearchViewModel(private val tracksInteractor: TracksInteractor,
 
     private val stateLiveData = MutableLiveData<TracksSearchState>()
     fun observeState(): LiveData<TracksSearchState> = stateLiveData
+
+    private val historyState = MutableLiveData<List<Track>>()
+    fun observeHistoryState(): LiveData<List<Track>> = historyState
 
     fun addTrackToHistory(track: Track) {
         history.add(track)
@@ -72,6 +77,7 @@ class TracksSearchViewModel(private val tracksInteractor: TracksInteractor,
     }
 
     fun clearSearchingText() {
+        getHistoryList()
         renderState(TracksSearchState.History)
     }
 
@@ -87,7 +93,7 @@ class TracksSearchViewModel(private val tracksInteractor: TracksInteractor,
         findTracks(newSearchText ?: "")
     }
 
-    fun setLastSearchText(changedText: String) {
+    private fun setLastSearchText(changedText: String) {
         this.lastSearchText = changedText
     }
 
@@ -95,11 +101,29 @@ class TracksSearchViewModel(private val tracksInteractor: TracksInteractor,
         return lastSearchText ?: ""
     }
 
-    fun getHistoryList(): MutableList<Track> {
-        return history.tracksList
+    fun getHistoryList() {
+        getFavoritesIdsList(history.tracksList)
     }
 
     private fun renderState(state: TracksSearchState) {
         stateLiveData.postValue(state)
+    }
+
+    private fun getFavoritesIdsList(tracks: List<Track>) {
+        viewModelScope.launch {
+            favoritesRepository
+                .getFavoriteTracksIds()
+                .collect { list ->
+                    updateFavoriteMark(tracks, list)
+                }
+        }
+    }
+
+    private fun updateFavoriteMark(tracks: List<Track>, idsList: List<Long>) {
+        var trackList = mutableListOf<Track>()
+        for (track in tracks) {
+            trackList.add(track.copy(isFavorite = idsList.contains(track.id)))
+        }
+        historyState.postValue(trackList)
     }
 }
