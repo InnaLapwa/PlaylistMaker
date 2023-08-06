@@ -56,6 +56,12 @@ class FavoritesFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        viewModel.getFavoritesList()
+    }
+
     private fun render(state: FavoritesState) {
         when (state) {
             is FavoritesState.Empty -> showNothingFound()

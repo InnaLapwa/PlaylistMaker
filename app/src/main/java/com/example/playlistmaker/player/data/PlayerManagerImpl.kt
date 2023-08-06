@@ -11,26 +11,32 @@ class PlayerManagerImpl: PlayerManager {
     private var state: PlayerState = PlayerState.Default()
     private var stateCallback: ((PlayerState) -> Unit)? = null
 
-    override fun prepare(previewUrl: String) {
-        mediaPlayer = MediaPlayer()
-        mediaPlayer.setDataSource(previewUrl)
-        mediaPlayer.prepareAsync()
-        mediaPlayer.setOnPreparedListener {
-            updateState(PlayerState.Prepared())
-        }
-        mediaPlayer.setOnCompletionListener {
-            updateState(PlayerState.Prepared())
+    override fun prepare(previewUrl: String?) {
+        if (previewUrl != null) {
+            mediaPlayer = MediaPlayer()
+            mediaPlayer.setDataSource(previewUrl)
+            mediaPlayer.prepareAsync()
+            mediaPlayer.setOnPreparedListener {
+                updateState(PlayerState.Prepared())
+            }
+            mediaPlayer.setOnCompletionListener {
+                updateState(PlayerState.Prepared())
+            }
         }
     }
 
     override fun start() {
-        mediaPlayer.start()
-        updateState(PlayerState.Playing(getCurrentPlayerPosition()))
+        if (state !is PlayerState.Default) {
+            mediaPlayer.start()
+            updateState(PlayerState.Playing(getCurrentPlayerPosition()))
+        }
     }
 
     override fun pause() {
-        mediaPlayer.pause()
-        updateState(PlayerState.Paused(getCurrentPlayerPosition()))
+        if (state !is PlayerState.Default) {
+            mediaPlayer.pause()
+            updateState(PlayerState.Paused(getCurrentPlayerPosition()))
+        }
     }
 
     override fun release() {

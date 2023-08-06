@@ -63,9 +63,9 @@ class PlayerActivity : AppCompatActivity() {
     private fun setTrackInfo(track: Track) {
         binding.playerTrackName.text = track.trackName
         binding.playerArtistName.text = track.artistName
-        binding.playerTrackTimeData.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTime.toInt())
+        binding.playerTrackTimeData.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTime?.toInt() ?: 0)
         binding.playerAlbumData.text = track.collectionName
-        binding.playerReleaseDateData.text = track.releaseDate.substring(0,4)
+        binding.playerReleaseDateData.text = track.releaseDate?.substring(0,4)
         binding.playerGenreData.text = track.primaryGenreName
         binding.playerCountryData.text = track.country
         Glide.with(applicationContext)

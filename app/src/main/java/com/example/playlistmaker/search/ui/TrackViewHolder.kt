@@ -1,5 +1,6 @@
 package com.example.playlistmaker.search.ui
 
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -21,11 +22,12 @@ class TrackViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
     fun bind(model: Track) {
         trackName.text = model.trackName
         artistName.text = model.artistName
-        trackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTime.toInt())
+        Log.d("test", model.trackName)
+        trackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTime?.toInt() ?: 0)
         Glide.with(itemView)
              .load(model.artworkUrl100)
              .centerCrop()
-             .transform(RoundedCorners(4))
+             .transform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.album_cover_corner_radius)))
              .placeholder(R.drawable.ic_no_connection)
              .into(artworkUrl100)
     }

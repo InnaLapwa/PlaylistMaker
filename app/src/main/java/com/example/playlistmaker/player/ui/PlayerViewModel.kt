@@ -69,7 +69,7 @@ class PlayerViewModel(private val playerManager: PlayerManager, private val favo
         playerManager.release()
     }
 
-    fun preparePlayer(previewUrl: String) {
+    fun preparePlayer(previewUrl: String?) {
         playerManager.prepare(previewUrl)
     }
 

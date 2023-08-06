@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.library.favorites.domain.db.FavoritesRepository
 import com.example.playlistmaker.search.domain.api.TracksInteractor
+import com.example.playlistmaker.search.domain.api.TracksRepository
 import com.example.playlistmaker.search.domain.models.TracksSearchState
 import com.example.playlistmaker.util.debounceDelayAction
 import kotlinx.coroutines.Job
@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 class TracksSearchViewModel(private val tracksInteractor: TracksInteractor,
                             private val history: SearchHistory,
-                            private val favoritesRepository: FavoritesRepository): ViewModel() {
+                            private val tracksRepository: TracksRepository): ViewModel() {
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
@@ -77,7 +77,7 @@ class TracksSearchViewModel(private val tracksInteractor: TracksInteractor,
     }
 
     fun clearSearchingText() {
-        getHistoryList()
+        updateHistoryList()
         renderState(TracksSearchState.History)
     }
 
@@ -101,29 +101,36 @@ class TracksSearchViewModel(private val tracksInteractor: TracksInteractor,
         return lastSearchText ?: ""
     }
 
-    fun getHistoryList() {
-        getFavoritesIdsList(history.tracksList)
+    fun updateHistoryList() {
+        markHistoryList(history.tracksList)
     }
 
     private fun renderState(state: TracksSearchState) {
         stateLiveData.postValue(state)
     }
 
-    private fun getFavoritesIdsList(tracks: List<Track>) {
+    private fun markHistoryList(tracks: List<Track>) {
         viewModelScope.launch {
-            favoritesRepository
-                .getFavoriteTracksIds()
-                .collect { list ->
-                    updateFavoriteMark(tracks, list)
+            tracksRepository
+                .getFavoriteMarkedTrackList(tracks)
+                .collect { trackList ->
+                    historyState.postValue(trackList)
                 }
         }
     }
 
-    private fun updateFavoriteMark(tracks: List<Track>, idsList: List<Long>) {
-        var trackList = mutableListOf<Track>()
-        for (track in tracks) {
-            trackList.add(track.copy(isFavorite = idsList.contains(track.id)))
+    fun updateSearchingResult(tracks: List<Track>) {
+        if (!tracks.isEmpty())
+            markSearchingResultList(tracks)
+    }
+
+    private fun markSearchingResultList(tracks: List<Track>) {
+        viewModelScope.launch {
+            tracksRepository
+                .getFavoriteMarkedTrackList(tracks)
+                .collect { trackList ->
+                    renderState(TracksSearchState.Success(trackList))
+                }
         }
-        historyState.postValue(trackList)
     }
 }

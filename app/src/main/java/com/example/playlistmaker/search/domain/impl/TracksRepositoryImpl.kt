@@ -9,7 +9,10 @@ import com.example.playlistmaker.data.dto.TracksSearchRequest
 import com.example.playlistmaker.data.dto.TracksSearchResponse
 import com.example.playlistmaker.search.domain.api.TracksRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.toList
 
 class TracksRepositoryImpl(private val networkClient: NetworkClient, private val appDatabase: AppDatabase) : TracksRepository {
 
@@ -30,14 +33,24 @@ class TracksRepositoryImpl(private val networkClient: NetworkClient, private val
     }
 
     private suspend fun getConvertedTrackList(tracks: List<TrackDto>): List<Track> {
+        val trackList = tracks.map { track ->
+            convertTrackDto(track)
+        }
+
+        return getFavoriteMarkedTrackList(trackList).flattenToList()
+    }
+
+    override suspend fun getFavoriteMarkedTrackList(tracks: List<Track>): Flow<List<Track>> = flow{
         val favoriteTracks = appDatabase.trackDao().getTracksIds().toSet()
 
         val trackList = tracks.map { track ->
-            convertTrackDto(track).copy(isFavorite = favoriteTracks.contains(track.id))
+            track.copy(isFavorite = favoriteTracks.contains(track.id))
         }
-        return trackList
+        emit(trackList)
     }
 
+    private suspend fun <T> Flow<List<T>>.flattenToList() =
+        flatMapConcat { it.asFlow() }.toList()
 
     private fun convertTrackDto(trackDto: TrackDto) = Track(
         id = trackDto.id,

@@ -16,7 +16,7 @@ data class TrackEntity(
     val artistName: String, // Имя исполнителя
 
     @ColumnInfo(name = "track_time")
-    val trackTime: String, // Продолжительность трека
+    val trackTime: String?, // Продолжительность трека
 
     @ColumnInfo(name = "artwork_url100")
     val artworkUrl100: String, // Ссылка на изображение обложки
@@ -25,7 +25,7 @@ data class TrackEntity(
     val collectionName: String, // Название альбома
 
     @ColumnInfo(name = "release_date")
-    val releaseDate: String, // Год релиза трека
+    val releaseDate: String?, // Год релиза трека
 
     @ColumnInfo(name = "primary_genre_name")
     val primaryGenreName: String, // Жанр трека
@@ -34,7 +34,7 @@ data class TrackEntity(
     val country: String, // Страна исполнителя
 
     @ColumnInfo(name = "preview_url")
-    val previewUrl: String, // Ссылка на отрывок
+    val previewUrl: String?, // Ссылка на отрывок
 
     @ColumnInfo(name = "creation_time")
     val creationTime: Long
