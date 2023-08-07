@@ -11,7 +11,8 @@ class SearchHistory(private val localStorage: LocalStorage) {
     }
 
     fun add(track: Track) {
-        tracksList.remove(track)
+        tracksList.removeAll { it.id == track.id }
+
         tracksList.add(0, track)
 
         if (tracksList.size > HISTORY_SIZE)

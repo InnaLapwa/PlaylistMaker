@@ -1,8 +1,10 @@
 package com.example.playlistmaker.di
 
 import android.content.Context.MODE_PRIVATE
+import androidx.room.Room
 import com.example.playlistmaker.PLAYLIST_MAKER_PREFERENCES
 import com.example.playlistmaker.data.NetworkClient
+import com.example.playlistmaker.data.db.AppDatabase
 import com.example.playlistmaker.data.network.ITunesSearchApi
 import com.example.playlistmaker.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.player.data.PlayerManagerImpl
@@ -42,5 +44,8 @@ val dataModule = module {
         RetrofitNetworkClient(get(), androidContext())
     }
 
-
+    single {
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
+            .build()
+    }
 }

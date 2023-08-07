@@ -4,13 +4,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.library.favorites.domain.db.FavoritesInteractor
 import com.example.playlistmaker.player.domain.PlayerManager
 import com.example.playlistmaker.player.domain.models.PlayerState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class PlayerViewModel(private val playerManager: PlayerManager): ViewModel() {
+class PlayerViewModel(private val playerManager: PlayerManager, private val favoritesInteractor: FavoritesInteractor): ViewModel() {
 
     companion object {
         private const val PLAYING_TIME_UPDATING_DELAY = 300L
@@ -20,6 +22,10 @@ class PlayerViewModel(private val playerManager: PlayerManager): ViewModel() {
 
     private val playerState = MutableLiveData<PlayerState>(PlayerState.Default())
     fun observePlayerState(): LiveData<PlayerState> = playerState
+
+    private val favoriteState = MutableLiveData<Boolean>()
+    fun observeFavoriteState(): LiveData<Boolean> = favoriteState
+
 
     init {
         playerManager.setStateCallback { playerState ->
@@ -63,7 +69,7 @@ class PlayerViewModel(private val playerManager: PlayerManager): ViewModel() {
         playerManager.release()
     }
 
-    fun preparePlayer(previewUrl: String) {
+    fun preparePlayer(previewUrl: String?) {
         playerManager.prepare(previewUrl)
     }
 
@@ -74,5 +80,25 @@ class PlayerViewModel(private val playerManager: PlayerManager): ViewModel() {
 
     private fun renderState(state: PlayerState) {
         playerState.postValue(state)
+    }
+
+    private fun renderFavoriteState(inFavorite: Boolean) {
+        favoriteState.postValue(inFavorite)
+    }
+
+    fun onFavoriteClicked(track: Track) {
+        if (track.isFavorite) {
+            viewModelScope.launch {
+                favoritesInteractor.deleteTrack(track)
+                track.isFavorite = false
+                renderFavoriteState(track.isFavorite)
+            }
+        } else {
+            viewModelScope.launch {
+                favoritesInteractor.saveTrack(track)
+                track.isFavorite = true
+                renderFavoriteState(track.isFavorite)
+            }
+        }
     }
 }

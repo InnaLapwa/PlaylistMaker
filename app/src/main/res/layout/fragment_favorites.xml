@@ -5,25 +5,39 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="?attr/background_color"
-    tools:context=".library.ui.FavoritesFragment">
+    tools:context=".library.favorites.ui.FavoritesFragment">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <ImageView
-            android:layout_width="@dimen/library_empty_icon_size"
-            android:layout_height="@dimen/library_empty_icon_size"
-            android:layout_marginTop="104dp"
-            app:srcCompat="@drawable/ic_nothing_found"
-            android:layout_gravity="center"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/favorites_recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="24dp"/>
 
-        <TextView
+        <LinearLayout
+            android:id="@+id/empty_favorites"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/library_favorites_empty"
-            style="@style/LibraryTextStyle"/>
-    </LinearLayout>
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/library_empty_icon_size"
+                android:layout_height="@dimen/library_empty_icon_size"
+                android:layout_marginTop="104dp"
+                app:srcCompat="@drawable/ic_nothing_found"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/library_favorites_empty"
+                style="@style/LibraryTextStyle"/>
+        </LinearLayout>
+
+
+    </FrameLayout>
 </ScrollView>

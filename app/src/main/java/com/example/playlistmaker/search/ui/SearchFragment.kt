@@ -55,15 +55,27 @@ class SearchFragment: Fragment() {
             render(it)
         }
 
-        if (viewModel.isHistoryEmpty()) {
-            binding.searchHistoryLayout.visibility = View.GONE
-        }
+        viewModel.observeHistoryState().observe(viewLifecycleOwner) {
+            historyAdapter.tracks.clear()
+            historyAdapter.tracks.addAll(it)
+            historyAdapter.notifyDataSetChanged()
 
+            if (viewModel.isHistoryEmpty()) {
+                binding.searchHistoryLayout.visibility = View.GONE
+            }
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         inputTextWatcher.let { binding.etSearch.removeTextChangedListener(it) }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        viewModel.updateSearchingResult(trackAdapter.tracks)
+        viewModel.updateHistoryList()
     }
 
     private fun setListeners() {
@@ -129,7 +141,7 @@ class SearchFragment: Fragment() {
 
         binding.searchHistoryRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.searchHistoryRecyclerView.adapter = historyAdapter
-        historyAdapter.tracks = viewModel.getHistoryList()
+        viewModel.updateHistoryList()
     }
 
     private fun clearButtonVisibility(s: CharSequence?) = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE

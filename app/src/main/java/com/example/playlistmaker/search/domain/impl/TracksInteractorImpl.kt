@@ -15,6 +15,5 @@ class TracksInteractorImpl(private val repository: TracksRepository) : TracksInt
                 is Resource.Error -> { Pair(null, result.message) }
             }
         }
-
     }
 }

@@ -16,6 +16,7 @@
     <dimen name="search_track_layout_height">60dp</dimen>
     <dimen name="search_track_cover_size">48dp</dimen>
     <dimen name="search_track_dot_icon_size">4dp</dimen>
+    <dimen name="album_cover_corner_radius">8px</dimen>
 
     <dimen name="main_icon_size">24dp</dimen>
     <dimen name="main_icon_text_padding">12dp</dimen>
