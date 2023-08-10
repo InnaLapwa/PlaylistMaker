@@ -35,4 +35,6 @@
     <string name="library_favorites_empty">Ваша медиатека пуста</string>
     <string name="library_playlists_empty">Вы не создали ни одного плейлиста</string>
     <string name="library_new_playlist">Новый плейлист</string>
+
+    <string name="newPlaylist_header_text">Новый плейлист</string>
 </resources>
