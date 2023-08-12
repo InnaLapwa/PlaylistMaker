@@ -1,21 +1,35 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="?attr/background_color"
-    tools:context=".library.ui.PlaylistsFragment">
+    android:orientation="vertical"
+    tools:context=".library.playlists.ui.PlaylistsFragment">
+
+    <Button
+        android:id="@+id/new_playlist"
+        style="@style/SearchButtonsStyle"
+        android:layout_marginTop="24dp"
+        android:text="@string/library_new_playlist" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/playlists_recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="24dp"
+        tools:listitem="@layout/list_item_playlist_card"
+        app:spanCount="2"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        android:visibility="visible" />
 
     <LinearLayout
+        android:id="@+id/no_playlists"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <Button
-            style="@style/SearchButtonsStyle"
-            android:layout_marginTop="24dp"
-            android:text="@string/library_new_playlist" />
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="@dimen/library_empty_icon_size"
@@ -31,4 +45,4 @@
             android:text="@string/library_playlists_empty"
             style="@style/LibraryTextStyle"/>
     </LinearLayout>
-</ScrollView>
+</LinearLayout>
