@@ -8,6 +8,7 @@ import com.example.playlistmaker.domain.models.Playlist
 
 class PlaylistsListAdapter: RecyclerView.Adapter<PlaylistsListViewHolder>() {
     var playlists = mutableListOf<Playlist>()
+    var onItemClick: ((Playlist) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistsListViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_playlist_list, parent, false)
@@ -20,5 +21,8 @@ class PlaylistsListAdapter: RecyclerView.Adapter<PlaylistsListViewHolder>() {
 
     override fun onBindViewHolder(holder: PlaylistsListViewHolder, position: Int) {
         holder.bind(playlists[position])
+        holder.itemView.setOnClickListener {
+            onItemClick?.invoke(playlists[position])
+        }
     }
 }

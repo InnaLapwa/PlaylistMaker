@@ -28,5 +28,6 @@
         <item name="player_text_color">@color/deep_gray</item>
         <item name="player_play_icon_color">@color/deep_gray</item>
         <item name="navigation_color">@color/deep_gray</item>
+        <item name="bottom_sheet_rectangle_color">@color/light_gray</item>
     </style>
 </resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/gapped_rectangle"
+        android:width="312dp"
+        android:height="312dp"
+        android:gravity="center"/>
+
+    <item android:drawable="@drawable/ic_new_image"
+        android:gravity="center" />
+</layer-list>

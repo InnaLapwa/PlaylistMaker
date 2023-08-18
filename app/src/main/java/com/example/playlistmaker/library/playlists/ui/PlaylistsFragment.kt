@@ -30,13 +30,21 @@ class PlaylistsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        playlistsAdapter.playlists.clear()
-        viewModel.getPlaylists()
-
         viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
 
+        customizeRecyclerView()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        playlistsAdapter.playlists.clear()
+        viewModel.getPlaylists()
+    }
+
+    private fun customizeRecyclerView() {
         binding.playlistsRecyclerView.layoutManager = GridLayoutManager(requireContext(),2)
         binding.playlistsRecyclerView.adapter = playlistsAdapter
 

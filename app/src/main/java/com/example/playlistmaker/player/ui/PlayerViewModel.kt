@@ -9,6 +9,7 @@ import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.library.favorites.domain.db.FavoritesInteractor
 import com.example.playlistmaker.library.playlists.domain.db.PlaylistsInteractor
 import com.example.playlistmaker.domain.models.PlaylistsState
+import com.example.playlistmaker.library.playlists.domain.models.InsertTrackInPlaylistState
 import com.example.playlistmaker.player.domain.PlayerManager
 import com.example.playlistmaker.player.domain.models.PlayerState
 import kotlinx.coroutines.Job
@@ -34,6 +35,9 @@ class PlayerViewModel(
 
     private val stateLiveData = MutableLiveData<PlaylistsState>()
     fun observeState(): LiveData<PlaylistsState> = stateLiveData
+
+    private val resultOfInsert = MutableLiveData<InsertTrackInPlaylistState>()
+    fun observeInsertTrackInPlaylist(): LiveData<InsertTrackInPlaylistState> = resultOfInsert
 
     init {
         playerManager.setStateCallback { playerState ->
@@ -126,4 +130,20 @@ class PlayerViewModel(
         }
 
     }
+
+    fun addTrackInPlaylist(track: Track, playlist: Playlist) {
+        if (playlist.id != null) {
+            viewModelScope.launch {
+                val playlistIds = playlistsInteractor.getPlaylistsIdsContainTrack(track)
+                if (playlistIds.contains(playlist.id)) {
+                    resultOfInsert.postValue(InsertTrackInPlaylistState.Error("Трек уже добавлен в плейлист " + playlist.name))
+
+                } else {
+                    playlistsInteractor.addTrackInPlaylist(track, playlist)
+                    resultOfInsert.postValue(InsertTrackInPlaylistState.Success("Добавлено в плейлист " + playlist.name))
+                }
+            }
+        }
+    }
+
 }

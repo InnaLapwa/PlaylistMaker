@@ -37,4 +37,13 @@
     <string name="library_new_playlist">Новый плейлист</string>
 
     <string name="newPlaylist_header_text">Новый плейлист</string>
+    <string name="newPlaylist_question_title">Завершить создание плейлиста?</string>
+    <string name="newPlaylist_question_message">Все несохраненные данные будут потеряны</string>
+    <string name="newPlaylist_question_cancel_button">Отмена</string>
+    <string name="newPlaylist_question_save_button">Завершить</string>
+    <string name="newPlaylist_playlist_covers_folder">playlists_covers</string>
+
+    <string name="playlist_insert_track_message">Добавлено в плейлист </string>
+    <string name="playlist_insert_track_cancel_message">Трек уже добавлен в плейлист </string>
+
 </resources>

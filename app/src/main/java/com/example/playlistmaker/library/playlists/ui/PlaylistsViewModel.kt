@@ -28,6 +28,5 @@ class PlaylistsViewModel(private val playlistsInteractor: PlaylistsInteractor): 
                     }
                 }
         }
-
     }
 }

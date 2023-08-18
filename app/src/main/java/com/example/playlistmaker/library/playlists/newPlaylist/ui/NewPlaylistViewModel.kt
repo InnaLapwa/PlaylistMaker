@@ -6,12 +6,9 @@ import com.example.playlistmaker.library.playlists.newPlaylist.domain.db.NewPlay
 import kotlinx.coroutines.launch
 
 class NewPlaylistViewModel(private val newPlaylistInteractor: NewPlaylistInteractor): ViewModel()  {
-
-
     fun createPlaylist(name: String, description: String, coverPath: String) {
         viewModelScope.launch {
             newPlaylistInteractor.savePlaylist(name, description, coverPath)
         }
-
     }
 }

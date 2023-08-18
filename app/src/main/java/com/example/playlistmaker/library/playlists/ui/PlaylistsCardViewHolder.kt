@@ -15,19 +15,15 @@ class PlaylistsCardViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)
     private val playlistName: TextView = itemView.findViewById(R.id.playlistName)
     private val playlistSize: TextView = itemView.findViewById(R.id.playlistSize)
 
-
-
     fun bind(playlist: Playlist) {
         playlistName.text = playlist.name
-        playlistSize.text = playlist.size.toString()
+        playlistSize.text = playlist.size.toString() + " треков"
 
-        if (playlist.coverPath.isNotEmpty()) {
-            Glide.with(itemView)
-                .load(playlist.coverPath)
-                .centerCrop()
-                .transform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.playlist_cover_corner_radius)))
-                .placeholder(R.drawable.ic_no_connection)
-                .into(cover)
-        }
+        Glide.with(itemView)
+            .load(playlist.coverPath)
+            .centerCrop()
+            .transform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.playlist_cover_corner_radius)))
+            .placeholder(R.drawable.ic_no_connection)
+            .into(cover)
     }
 }
