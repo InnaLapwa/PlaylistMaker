@@ -247,7 +247,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="10dp"
-            android:text="Добавить в плейлист"
+            android:text="@string/bottom_sheet_title"
             android:textColor="?attr/player_text_color"
             android:textSize="19sp"
             android:textStyle="bold" />
