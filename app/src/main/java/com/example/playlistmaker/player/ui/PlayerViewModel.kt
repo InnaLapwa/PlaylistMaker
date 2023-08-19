@@ -4,15 +4,22 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.domain.models.Playlist
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.library.favorites.domain.db.FavoritesInteractor
+import com.example.playlistmaker.library.playlists.domain.db.PlaylistsInteractor
+import com.example.playlistmaker.domain.models.PlaylistsState
+import com.example.playlistmaker.library.playlists.domain.models.InsertTrackInPlaylistState
 import com.example.playlistmaker.player.domain.PlayerManager
 import com.example.playlistmaker.player.domain.models.PlayerState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class PlayerViewModel(private val playerManager: PlayerManager, private val favoritesInteractor: FavoritesInteractor): ViewModel() {
+class PlayerViewModel(
+    private val playerManager: PlayerManager,
+    private val favoritesInteractor: FavoritesInteractor,
+    private val playlistsInteractor: PlaylistsInteractor): ViewModel() {
 
     companion object {
         private const val PLAYING_TIME_UPDATING_DELAY = 300L
@@ -26,6 +33,11 @@ class PlayerViewModel(private val playerManager: PlayerManager, private val favo
     private val favoriteState = MutableLiveData<Boolean>()
     fun observeFavoriteState(): LiveData<Boolean> = favoriteState
 
+    private val stateLiveData = MutableLiveData<PlaylistsState>()
+    fun observeState(): LiveData<PlaylistsState> = stateLiveData
+
+    private val resultOfInsert = MutableLiveData<InsertTrackInPlaylistState>()
+    fun observeInsertTrackInPlaylist(): LiveData<InsertTrackInPlaylistState> = resultOfInsert
 
     init {
         playerManager.setStateCallback { playerState ->
@@ -101,4 +113,37 @@ class PlayerViewModel(private val playerManager: PlayerManager, private val favo
             }
         }
     }
+
+    fun getPlaylists() {
+        viewModelScope.launch {
+            playlistsInteractor
+                .getPlaylists()
+                .collect { list ->
+                    val playlistsList = mutableListOf<Playlist>()
+                    playlistsList.addAll(list)
+                    if (playlistsList.isNotEmpty()) {
+                        stateLiveData.postValue(PlaylistsState.Success(playlistsList))
+                    } else {
+                        stateLiveData.postValue(PlaylistsState.Empty)
+                    }
+                }
+        }
+
+    }
+
+    fun addTrackInPlaylist(track: Track, playlist: Playlist) {
+        if (playlist.id != null) {
+            viewModelScope.launch {
+                val playlistIds = playlistsInteractor.getPlaylistsIdsContainTrack(track)
+                if (playlistIds.contains(playlist.id)) {
+                    resultOfInsert.postValue(InsertTrackInPlaylistState.Error("Трек уже добавлен в плейлист " + playlist.name))
+
+                } else {
+                    playlistsInteractor.addTrackInPlaylist(track, playlist)
+                    resultOfInsert.postValue(InsertTrackInPlaylistState.Success("Добавлено в плейлист " + playlist.name))
+                }
+            }
+        }
+    }
+
 }

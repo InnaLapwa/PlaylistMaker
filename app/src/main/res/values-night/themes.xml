@@ -28,5 +28,6 @@
         <item name="player_text_color">@color/white</item>
         <item name="player_play_icon_color">@color/white</item>
         <item name="navigation_color">@color/ultra_white</item>
+        <item name="bottom_sheet_rectangle_color">@color/white</item>
     </style>
 </resources>

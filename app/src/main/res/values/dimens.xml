@@ -26,6 +26,8 @@
 
     <dimen name="library_empty_icon_size">120dp</dimen>
 
+    <dimen name="playlist_cover_corner_radius">8px</dimen>
+
     
     <dimen name="title_text_size">22sp</dimen>
     <dimen name="main_button_text_size">24sp</dimen>

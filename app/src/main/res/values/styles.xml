@@ -142,4 +142,10 @@
         <item name="backgroundTint">?attr/background_color</item>
         <item name="itemRippleColor">@color/blue</item>
     </style>
+
+    <style name="TextInputOutlined" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="hintTextColor">@color/blue</item>
+        <item name="android:textColorHint">?attr/text_color</item>
+        <item name="boxStrokeColor">@color/edit_text_color_selector</item>
+    </style>
 </resources>

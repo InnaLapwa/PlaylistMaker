@@ -22,7 +22,8 @@ import com.example.playlistmaker.util.debounceActionDelay
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment: Fragment() {
-    private lateinit var binding: FragmentSearchBinding
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
     private val viewModel by viewModel<TracksSearchViewModel>()
 
     private val trackAdapter = TrackAdapter()
@@ -33,7 +34,7 @@ class SearchFragment: Fragment() {
     private lateinit var onTrackClickDebounce: (Track) -> Unit
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentSearchBinding.inflate(inflater, container, false)
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -69,6 +70,7 @@ class SearchFragment: Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         inputTextWatcher.let { binding.etSearch.removeTextChangedListener(it) }
+        _binding = null
     }
 
     override fun onResume() {

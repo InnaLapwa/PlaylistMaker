@@ -120,7 +120,7 @@ class TracksSearchViewModel(private val tracksInteractor: TracksInteractor,
     }
 
     fun updateSearchingResult(tracks: List<Track>) {
-        if (!tracks.isEmpty())
+        if (tracks.isNotEmpty())
             markSearchingResultList(tracks)
     }
 
