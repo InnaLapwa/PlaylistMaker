@@ -17,7 +17,8 @@ import com.example.playlistmaker.util.debounceActionDelay
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FavoritesFragment : Fragment() {
-    private lateinit var binding: FragmentFavoritesBinding
+    private var _binding: FragmentFavoritesBinding? = null
+    private val binding get() = _binding!!
     private val viewModel by viewModel<FavoritesViewModel>()
 
     private val favoritesAdapter = TrackAdapter()
@@ -28,7 +29,7 @@ class FavoritesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentFavoritesBinding.inflate(inflater, container, false)
+        _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -60,6 +61,11 @@ class FavoritesFragment : Fragment() {
         super.onResume()
 
         viewModel.getFavoritesList()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun render(state: FavoritesState) {

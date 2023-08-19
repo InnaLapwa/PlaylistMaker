@@ -14,7 +14,8 @@ import com.example.playlistmaker.domain.models.PlaylistsState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistsFragment : Fragment() {
-    private lateinit var binding: FragmentPlaylistsBinding
+    private var _binding: FragmentPlaylistsBinding? = null
+    private val binding get() = _binding!!
     private val viewModel by viewModel<PlaylistsViewModel>()
 
     private val playlistsAdapter = PlaylistsCardAdapter()
@@ -23,7 +24,7 @@ class PlaylistsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentPlaylistsBinding.inflate(inflater, container, false)
+        _binding = FragmentPlaylistsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -42,6 +43,11 @@ class PlaylistsFragment : Fragment() {
 
         playlistsAdapter.playlists.clear()
         viewModel.getPlaylists()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun customizeRecyclerView() {

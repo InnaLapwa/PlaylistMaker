@@ -28,7 +28,9 @@ import java.io.FileOutputStream
 
 
 class NewPlaylistFragment: Fragment() {
-    private lateinit var binding: FragmentNewPlaylistBinding
+    private var _binding: FragmentNewPlaylistBinding? = null
+    private val binding get() = _binding!!
+
     private val viewModel by viewModel<NewPlaylistViewModel>()
 
     private var coverUri: Uri? = null
@@ -39,7 +41,7 @@ class NewPlaylistFragment: Fragment() {
     private lateinit var confirmDialog: MaterialAlertDialogBuilder
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentNewPlaylistBinding.inflate(inflater, container, false)
+        _binding = FragmentNewPlaylistBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -58,6 +60,13 @@ class NewPlaylistFragment: Fragment() {
             }.setPositiveButton(getString(R.string.newPlaylist_question_save_button)) { dialog, which ->
                 navigateOut()
             }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        titleTextWatcher.let { binding.name.removeTextChangedListener(it) }
+        descriptionTextWatcher.let { binding.description.removeTextChangedListener(it) }
+        _binding = null
     }
 
     private fun setSaveButtonVisibility(name: CharSequence?) {
