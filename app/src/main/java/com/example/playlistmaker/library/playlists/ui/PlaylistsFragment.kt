@@ -13,7 +13,6 @@ import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.example.playlistmaker.domain.models.Playlist
 import com.example.playlistmaker.domain.models.PlaylistsState
 import com.example.playlistmaker.library.playlists.currentPlaylist.ui.CurrentPlaylistFragment
-import com.example.playlistmaker.library.playlists.newPlaylist.ui.NewPlaylistFragment
 import com.example.playlistmaker.util.debounceActionDelay
 import org.koin.androidx.viewmodel.ext.android.viewModel
 

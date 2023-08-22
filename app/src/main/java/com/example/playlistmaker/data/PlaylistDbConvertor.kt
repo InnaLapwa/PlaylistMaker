@@ -45,7 +45,7 @@ class PlaylistDbConvertor {
     }
 
     fun map(trackId: Long, playlistId: Long): TrackPlaylistEntity {
-        return TrackPlaylistEntity(trackId, playlistId)
+        return TrackPlaylistEntity(trackId, playlistId, System.currentTimeMillis())
     }
 
 }

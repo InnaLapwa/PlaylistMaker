@@ -22,6 +22,6 @@ interface TrackLibraryDao {
             "WHERE tp.playlist_id IS NULL)")
     suspend fun deleteUnusedTracks()
 
-    @Query("SELECT * FROM track_library_table tl INNER JOIN track_playlist_table tp ON tl.id = tp.track_id WHERE tp.playlist_id=:playlistId")
+    @Query("SELECT * FROM track_library_table tl INNER JOIN track_playlist_table tp ON tl.id = tp.track_id WHERE tp.playlist_id=:playlistId ORDER BY tp.creation_time DESC")
     suspend fun getTracksInPlaylist(playlistId: Long): List<TrackLibraryEntity>
 }

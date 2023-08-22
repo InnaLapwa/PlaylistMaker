@@ -12,7 +12,7 @@ import com.example.playlistmaker.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.*
 
-class TrackViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+class TrackViewHolder(itemView: View, private val coverResolution: String): RecyclerView.ViewHolder(itemView) {
 
     private val trackName: TextView = itemView.findViewById(R.id.trackName)
     private val artistName: TextView = itemView.findViewById(R.id.artistName)
@@ -25,7 +25,7 @@ class TrackViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         Log.d("test", model.trackName)
         trackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTime?.toInt() ?: 0)
         Glide.with(itemView)
-             .load(model.artworkUrl100)
+             .load(model.getCoverArtwork(coverResolution))
              .centerCrop()
              .transform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.album_cover_corner_radius)))
              .placeholder(R.drawable.ic_no_connection)

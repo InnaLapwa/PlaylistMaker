@@ -6,14 +6,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.models.Track
 
-class TrackAdapter: RecyclerView.Adapter<TrackViewHolder> () {
+class TrackAdapter(private val coverResolution: String = "100"): RecyclerView.Adapter<TrackViewHolder> () {
     var tracks = mutableListOf<Track>()
     var onItemClick: ((Track) -> Unit)? = null
     var onLongItemClick: ((Track) -> Boolean)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.search_track_view, parent, false)
-        return TrackViewHolder(view)
+        return TrackViewHolder(view, coverResolution)
     }
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {

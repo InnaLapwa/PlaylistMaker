@@ -35,7 +35,7 @@ class CurrentPlaylistFragment : Fragment() {
     private lateinit var tracksBottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var menuBottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var onTrackClickDebounce: (Track) -> Unit
-    private val tracksAdapter = TrackAdapter()
+    private val tracksAdapter = TrackAdapter("60")
     private lateinit var confirmDialog: MaterialAlertDialogBuilder
     private lateinit var currentPlaylist: Playlist
 
@@ -65,10 +65,10 @@ class CurrentPlaylistFragment : Fragment() {
         binding.playlistMenuEdit.setOnClickListener { editPlaylist() }
         binding.playlistMenuDelete.setOnClickListener {
             confirmDialog = MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Удалить плейлист")
-                .setMessage("Хотите удалить плейлист \"${currentPlaylist.name}\"?")
-                .setNeutralButton("Нет") { dialog, which ->
-                }.setPositiveButton("Да") { dialog, which ->
+                .setTitle(getString(R.string.current_playlist_delete_question_title))
+                .setMessage(getString(R.string.current_playlist_delete_question_message, currentPlaylist.name))
+                .setNeutralButton(getString(R.string.no)) { dialog, which ->
+                }.setPositiveButton(getString(R.string.yes)) { dialog, which ->
                     viewModel.deletePlaylist(currentPlaylist)
                 }
             confirmDialog.show()
@@ -174,8 +174,10 @@ class CurrentPlaylistFragment : Fragment() {
         currentPlaylist = playlist
         binding.playlistName.text = playlist.name
         binding.playlistDescription.text = playlist.description
-        binding.playlistDuration.text = viewModel.countPlaylistDuration(tracks) + " " + getString(R.string.current_playlist_duration_text)
-        binding.playlistSize.text = playlist.size.toString() + " " + getString(R.string.current_playlist_size_text)
+
+        val playlistDuration = viewModel.countPlaylistDuration(tracks).toInt()
+        binding.playlistDuration.text = resources.getQuantityString(R.plurals.minutes_plurals, playlistDuration, playlistDuration)
+        binding.playlistSize.text = resources.getQuantityString(R.plurals.tracks_plurals, playlist.size, playlist.size)
         Glide.with(requireContext())
             .load(playlist.coverPath)
             .centerCrop()
@@ -184,6 +186,11 @@ class CurrentPlaylistFragment : Fragment() {
 
         if (playlist.description.isEmpty())
             binding.playlistDescription.visibility = View.GONE
+        else
+            binding.playlistDescription.visibility = View.VISIBLE
+
+        if (tracks.isEmpty())
+            Toast.makeText(requireContext(), getString(R.string.current_playlist_empty), Toast.LENGTH_LONG).show()
 
         tracksAdapter.tracks.clear()
         tracksAdapter.tracks.addAll(tracks)
@@ -192,7 +199,7 @@ class CurrentPlaylistFragment : Fragment() {
 
     private fun fillPlaylistMenu() {
         binding.menuPlaylistName.text = currentPlaylist.name
-        binding.menuPlaylistSize.text = currentPlaylist.size.toString() + " " + getString(R.string.current_playlist_size_text)
+        binding.menuPlaylistSize.text = resources.getQuantityString(R.plurals.tracks_plurals, currentPlaylist.size, currentPlaylist.size)
         Glide.with(requireContext())
             .load(currentPlaylist.coverPath)
             .transform(RoundedCorners(8))

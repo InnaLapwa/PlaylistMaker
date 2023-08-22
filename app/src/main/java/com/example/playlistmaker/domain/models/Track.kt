@@ -18,6 +18,6 @@ data class Track(
     val previewUrl: String?, // Ссылка на отрывок
     var isFavorite: Boolean = false
 ) : Serializable {
-    fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/',"512x512bb.jpg")
+    fun getCoverArtwork(resolution: String) = artworkUrl100.replaceAfterLast('/',"${resolution}x${resolution}bb.jpg")
     fun getTrackTimeFormatted() = SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackTime?.toInt() ?: 0)
 }

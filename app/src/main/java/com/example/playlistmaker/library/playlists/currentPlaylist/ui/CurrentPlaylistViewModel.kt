@@ -62,7 +62,7 @@ class CurrentPlaylistViewModel(private val playlistsInteractor: PlaylistsInterac
     fun countPlaylistDuration(trackList: List<Track>): String {
         var durationSum = 0
         for (track in trackList) {
-            durationSum = durationSum + (track.trackTime?.toInt() ?: 0)
+            durationSum += (track.trackTime?.toInt() ?: 0)
         }
 
         return SimpleDateFormat("mm", Locale.getDefault()).format(durationSum)

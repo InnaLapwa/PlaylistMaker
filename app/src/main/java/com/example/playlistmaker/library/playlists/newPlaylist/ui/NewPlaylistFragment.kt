@@ -22,14 +22,13 @@ import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.example.playlistmaker.domain.models.Playlist
-import com.example.playlistmaker.library.playlists.currentPlaylist.ui.CurrentPlaylistFragment
 import com.example.playlistmaker.player.ui.PlayerActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
-import java.util.concurrent.ThreadLocalRandom
+import java.util.UUID
 
 
 class NewPlaylistFragment: Fragment() {
@@ -55,9 +54,11 @@ class NewPlaylistFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val currentPlaylistId = arguments?.getLong(PLAYLIST_ID)
-        if (currentPlaylistId != null)
-            viewModel.getPlaylistInfo(currentPlaylistId)
+        if (arguments?.containsKey(PLAYLIST_ID) == true) {
+            val currentPlaylistId = arguments?.getLong(PLAYLIST_ID)
+            if (currentPlaylistId != null)
+                viewModel.getPlaylistInfo(currentPlaylistId)
+        }
 
         viewModel.observePlaylist().observe(viewLifecycleOwner) {
             currentPlaylist = it
@@ -86,8 +87,8 @@ class NewPlaylistFragment: Fragment() {
             .centerCrop()
             .placeholder(R.drawable.ic_no_connection)
             .into(binding.cover)
-        binding.save.text = "Сохранить"
-        binding.headerText.text = "Редактировать"
+        binding.save.text = getString(R.string.save)
+        binding.headerText.text = getString(R.string.edit)
         coverPath = playlist.coverPath
     }
 
@@ -173,7 +174,7 @@ class NewPlaylistFragment: Fragment() {
             filePath.mkdirs()
         }
 
-        val file = File(filePath, playlistName + ".jpg")
+        val file = File(filePath, UUID.randomUUID().toString() + ".jpg")
         val inputStream = requireActivity().contentResolver.openInputStream(uri)
         val outputStream = FileOutputStream(file)
         BitmapFactory
