@@ -50,4 +50,12 @@
     <string name="playlist_insert_track_message">Добавлено в плейлист </string>
     <string name="playlist_insert_track_cancel_message">Трек уже добавлен в плейлист </string>
 
+    <string name="current_playlist_duration_text">минут</string>
+    <string name="current_playlist_size_text">треков</string>
+    <string name="current_playlist_question_title">Удалить трек</string>
+    <string name="current_playlist_question_message">Вы уверены, что хотите удалить трек из плейлиста?</string>
+    <string name="current_playlist_question_cancel">Отмена</string>
+    <string name="current_playlist_question_delete">Удалить</string>
+    <string name="current_playlist_share_empty">В этом плейлисте нет списка треков, которыми можно поделиться</string>
+
 </resources>

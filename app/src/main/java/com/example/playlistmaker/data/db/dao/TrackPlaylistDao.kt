@@ -17,4 +17,10 @@ interface TrackPlaylistDao {
 
     @Query("SELECT playlist_id FROM track_playlist_table WHERE track_id=:trackId")
     suspend fun getPlaylistsIdsContainTrack(trackId: Long): List<Long>
+
+    @Query("SELECT track_id FROM track_playlist_table WHERE playlist_id=:playlistId")
+    suspend fun getTracksIdsInPlaylist(playlistId: Long): List<Long>
+
+    @Query("DELETE FROM track_playlist_table WHERE playlist_id=:playlistId")
+    suspend fun deletePlaylistsRelationships(playlistId: Long)
 }

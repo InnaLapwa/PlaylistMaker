@@ -1,6 +1,8 @@
 package com.example.playlistmaker.domain.models
 
 import java.io.Serializable
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 
 data class Track(
@@ -17,4 +19,5 @@ data class Track(
     var isFavorite: Boolean = false
 ) : Serializable {
     fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/',"512x512bb.jpg")
+    fun getTrackTimeFormatted() = SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackTime?.toInt() ?: 0)
 }
