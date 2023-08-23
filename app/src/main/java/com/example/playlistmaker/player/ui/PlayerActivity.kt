@@ -121,7 +121,7 @@ class PlayerActivity : AppCompatActivity() {
         binding.playerGenreData.text = track.primaryGenreName
         binding.playerCountryData.text = track.country
         Glide.with(applicationContext)
-            .load(track.getCoverArtwork())
+            .load(track.getCoverArtwork("512"))
             .centerCrop()
             .transform(RoundedCorners(8))
             .placeholder(R.drawable.ic_no_connection)

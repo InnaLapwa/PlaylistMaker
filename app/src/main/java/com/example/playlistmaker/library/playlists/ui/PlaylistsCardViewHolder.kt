@@ -21,8 +21,8 @@ class PlaylistsCardViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)
 
         Glide.with(itemView)
             .load(playlist.coverPath)
-            .centerCrop()
             .transform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.playlist_cover_corner_radius)))
+            .centerCrop()
             .placeholder(R.drawable.ic_no_connection)
             .into(cover)
     }

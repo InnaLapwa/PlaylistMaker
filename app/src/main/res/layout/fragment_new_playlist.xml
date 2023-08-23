@@ -30,6 +30,7 @@
             </FrameLayout>
 
             <TextView
+                android:id="@+id/header_text"
                 style="@style/HeaderTextStyle"
                 android:text="@string/newPlaylist_header_text" />
         </LinearLayout>
